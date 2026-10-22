@@ -1,0 +1,210 @@
+/*
+ * Extension-DOM adaptations for the Markdown Reader page theme (mdr.css).
+ *
+ * Counterpart of build_mdr_css() in nb_convert.py, applied to the extension's
+ * notebook DOM instead of pandoc's. The script's effective sizes are reproduced
+ * literally (e.g. code text = .9em x .85em of the 16px root) so both outputs
+ * look the same. Selectors are prefixed with .mdr-content so they outrank the
+ * generic pre/code/table rules in mdr.css; the sheet loads after styles.css.
+ */
+
+/* The script renders one block-flow column, so margins collapse; drop the flex gaps. */
+.jp-Notebook,
+.jp-Cell,
+.jp-Cell-inputWrapper,
+.jp-Cell-outputWrapper {
+  display: block;
+}
+
+html,
+body,
+#capture-root {
+  background: var(--bg-base);
+  color: var(--text-base);
+}
+/* body { margin: 30px } in the script: inside the page margin, so it shows only
+   at the very top and bottom of the document and on both sides of every page.
+   The vertical part is a margin on the article so the first heading's own
+   margin collapses into it as in WeasyPrint; flow-root keeps it inside the
+   captured box. */
+#capture-root {
+  display: flow-root;
+  padding: 0 30px;
+}
+.mdr-content {
+  margin: 30px 0;
+}
+/* WeasyPrint on macOS resolves the MDR font list to Helvetica Neue; Noto Sans CJK KR is the script's Korean fallback. */
+.mdr-content {
+  font-family: "Helvetica Neue", var(--font-family), "Noto Sans CJK KR", sans-serif;
+}
+.mdr-content .markdown-body {
+  background: transparent;
+  color: inherit;
+  font-size: inherit;
+}
+/* build_mdr_css: p, li, div { font-size: .9em } (div is reproduced per element below) */
+.mdr-content p,
+.mdr-content li {
+  font-size: 0.9em;
+}
+
+/* ---- Code cells: pandoc's div.sourceCode > pre, no line numbers ---- */
+.mdr-content .jp-InputArea-editor {
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  padding: 12px 20px;
+  margin: 20px 0;
+}
+.mdr-content .jp-InputArea-editor pre.jp-LineNumbers {
+  display: none;
+}
+.mdr-content .jp-InputArea-editor pre {
+  font-family: Menlo, Monaco, Consolas, "Courier New", NanumGothic, monospace;
+  font-size: 0.765em; /* .9em (div.sourceCode) x .85em (pre) */
+  line-height: 1.5;
+  word-break: break-word;
+  overflow-wrap: anywhere;
+}
+.mdr-content .jp-InputArea-editor pre.hljs {
+  padding-right: 0;
+}
+/* Undo MDR's inline-code and pre > code rules inside the highlighted cell. */
+.mdr-content .jp-InputArea-editor pre > code {
+  display: inline;
+  padding: 0;
+  margin: 0;
+  border-radius: 0;
+  background: transparent;
+  color: inherit;
+  font-family: inherit;
+  font-size: inherit;
+}
+
+/* Fenced blocks inside markdown cells: the script's bare pre rules */
+.mdr-content .markdown-body pre {
+  background: var(--hljs-base);
+  color: var(--hljs-mono-1);
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  padding: 12px 20px;
+  margin: 20px 0;
+  font-size: 0.85em;
+  line-height: 1.5;
+  white-space: pre-wrap;
+  word-break: break-word;
+  overflow-wrap: anywhere;
+}
+.mdr-content .markdown-body pre > code {
+  display: inline;
+  background: transparent;
+  color: inherit;
+  padding: 0;
+  border: 0;
+  font-size: 1em;
+}
+
+/* ---- Text outputs: pre.output-cell ---- */
+.mdr-content .jp-OutputArea {
+  display: block;
+  background: var(--bg-block);
+  color: var(--text-base);
+  border: 1px solid var(--border-color);
+  border-left-width: 4px;
+  border-radius: 6px;
+  padding: 12px 20px;
+  margin: 20px 0;
+}
+/* The script does not distinguish stderr/errors; ANSI colours carry the red. */
+.mdr-content .jp-OutputArea-stderr,
+.mdr-content .jp-OutputArea-error {
+  background: var(--bg-block);
+  color: var(--text-base);
+}
+.mdr-content .jp-RenderedText {
+  font-family: Menlo, Monaco, Consolas, "Courier New", NanumGothic, monospace;
+  font-size: 0.7225em; /* .85em (pre.output-cell) x .85em (its code) */
+  line-height: 1.1;
+  color: inherit;
+  overflow-wrap: anywhere;
+}
+
+/* ---- Rich outputs: pandoc wraps images in <figure>; HTML (DataFrames) stays a bare div ---- */
+.mdr-content .jp-OutputArea-image,
+.mdr-content .jp-OutputArea-html {
+  background: none;
+  border: 0;
+  padding: 0;
+}
+.mdr-content .jp-OutputArea-image {
+  margin: 22px auto;
+  text-align: center;
+}
+.mdr-content .jp-OutputArea-html {
+  margin: 0;
+  font-size: 0.9em;
+}
+
+/* ---- Tables (markdown and DataFrames): full width, first column snug and bold ----
+   html2canvas has no border-collapse: it paints every cell's own border, so the
+   shared edges of a collapsed grid come out doubled. Emulate the script's 1px
+   collapsed grid with separate borders on one side of each cell only. */
+.mdr-content table {
+  display: table;
+  width: 100%;
+  table-layout: auto;
+  margin: 1em 0;
+  border-collapse: separate;
+  border-spacing: 0;
+  border: 0; /* also drops the right/bottom outset border that <table border="1"> (pandas) adds */
+  border-top: 1px solid var(--border-color);
+  border-left: 1px solid var(--border-color);
+  font-size: inherit;
+}
+.mdr-content col {
+  width: auto;
+}
+.mdr-content thead {
+  display: table-row-group;
+}
+.mdr-content tr {
+  border: 0;
+}
+.mdr-content th,
+.mdr-content td {
+  border: 0;
+  border-right: 1px solid var(--border-color);
+  border-bottom: 1px solid var(--border-color);
+  font-size: 0.75em;
+  padding: 5px 7px;
+  text-align: inherit; /* WeasyPrint has no UA text-align for th */
+}
+.mdr-content th {
+  background-color: var(--bg-block);
+  font-weight: bold;
+}
+.mdr-content th:first-child,
+.mdr-content td:first-child {
+  width: 1%;
+  white-space: nowrap;
+  word-break: keep-all;
+}
+.mdr-content td:first-child {
+  font-weight: bold;
+}
+.mdr-content th:first-child code,
+.mdr-content td:first-child code {
+  white-space: nowrap;
+  word-break: keep-all;
+  overflow-wrap: normal;
+}
+/* Let MDR's row striping (on tr) show through styles.css's cell background. */
+.mdr-content .jp-RenderedHTML tr:nth-child(even) td {
+  background: transparent;
+}
+
+.mdr-content .jp-RawCell pre {
+  background: var(--bg-block);
+  border-color: var(--border-color);
+  color: var(--text-base);
+}

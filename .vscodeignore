@@ -19,3 +19,6 @@ out/test/**
 **/.eslintrc.json
 .vsixmanifest
 *.vsix
+*.py
+*.pdf
+*.txt

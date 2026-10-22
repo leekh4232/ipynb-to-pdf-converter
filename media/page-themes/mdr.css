@@ -1,0 +1,95 @@
+/*
+ * Markdown Reader (light/dark) page theme.
+ *
+ * Verbatim copy of MDR_CSS from nb_convert.py: the body-rendering rules of the
+ * Chrome extension "Markdown Reader" 3.6.30. Selects the palette from
+ * <html data-mdr-theme="light|dark" data-mdr-code-block-theme="light|dark">
+ * and expects the content inside body.mdr-pre.mdr > article.mdr-content.
+ * Keep in sync with nb_convert.py; extension-specific fixes live in
+ * mdr-overrides.css, not here.
+ */
+:root{--font-family:-apple-system, BlinkMacSystemFont, Segoe UI, Oxygen, Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;--color-white:#ffffff;--primary-color:#607cd2;--primary-color-alpha-10:rgba(96, 124, 210, .1);--important-color:#a16cfd;--important-color-alpha-10:rgba(161, 108, 253, .1);--success-color:#2fc178;--success-color-alpha-10:rgba(47, 193, 120, .1);--warning-color:#f6bb42;--warning-color-alpha-10:rgba(246, 186, 66, .1);--danger-color:#ff6767;--danger-color-alpha-10:rgba(255, 103, 103, .1);--highlight-color:#fff07e;--text-base:#2b2b2f;--text-muted:#909090;--border-color:#d0d7de;--bg-base:#ffffff;--bg-block:#f5f7fa;--bg-code:#f3f6ff;--bg-stripe:var(--bg-block);--opacity-image:1}
+:root[data-mdr-theme=light]{--color-white:#ffffff;--primary-color:#607cd2;--primary-color-alpha-10:rgba(96, 124, 210, .1);--important-color:#a16cfd;--important-color-alpha-10:rgba(161, 108, 253, .1);--success-color:#2fc178;--success-color-alpha-10:rgba(47, 193, 120, .1);--warning-color:#f6bb42;--warning-color-alpha-10:rgba(246, 186, 66, .1);--danger-color:#ff6767;--danger-color-alpha-10:rgba(255, 103, 103, .1);--highlight-color:#fff07e;--text-base:#2b2b2f;--text-muted:#909090;--border-color:#d0d7de;--bg-base:#ffffff;--bg-block:#f5f7fa;--bg-code:#f3f6ff;--bg-stripe:var(--bg-block);--opacity-image:1}
+:root[data-mdr-theme=dark]{--color-white:#ffffff;--primary-color:#6785e0;--primary-color-alpha-10:rgba(103, 133, 224, .1);--important-color:#9566e7;--important-color-alpha-10:rgba(149, 102, 231, .1);--success-color:#269f63;--success-color-alpha-10:rgba(38, 159, 99, .1);--warning-color:#e4af45;--warning-color-alpha-10:rgba(228, 175, 69, .1);--danger-color:#ee6262;--danger-color-alpha-10:rgba(238, 98, 98, .1);--highlight-color:#fce79b;--text-base:#e4e4e6;--text-muted:#909090;--border-color:#30363d;--bg-base:#0f1014;--bg-block:#1d222a;--bg-code:var(--primary-color-alpha-10);--bg-stripe:var(--bg-block);--opacity-image:.95}
+:root[data-mdr-code-block-theme=light]{--hljs-base:hsl(220, 29%, 97%);--hljs-mono-1:hsl(220, 8%, 20%);--hljs-mono-2:hsl(220, 6%, 44%);--hljs-mono-3:hsl(220, 4%, 54%);--hljs-hue-1:hsl(198, 99%, 37%);--hljs-hue-2:hsl(221, 87%, 60%);--hljs-hue-3:hsl(301, 63%, 40%);--hljs-hue-4:hsl(119, 34%, 47%);--hljs-hue-5:hsl(5, 74%, 59%);--hljs-hue-5-2:hsl(344, 84%, 43%);--hljs-hue-6:hsl(35, 99%, 36%);--hljs-hue-6-2:hsl(35, 99%, 40%)}
+:root[data-mdr-code-block-theme=dark]{--hljs-base:hsl(220, 18%, 14%);--hljs-mono-1:hsl(220, 17%, 79%);--hljs-mono-2:hsl(220, 9%, 55%);--hljs-mono-3:hsl(220, 8%, 45%);--hljs-hue-1:hsl(187, 60%, 61%);--hljs-hue-2:hsl(212, 100%, 74%);--hljs-hue-3:hsl(261, 76%, 76%);--hljs-hue-4:hsl(135, 46%, 66%);--hljs-hue-5:hsl(354, 92%, 72%);--hljs-hue-5-2:hsl(354, 71%, 66%);--hljs-hue-6:hsl(25, 100%, 72%);--hljs-hue-6-2:hsl(25, 73%, 65%)}
+:root[data-mdr-theme=light]{color-scheme:light}
+:root[data-mdr-theme=dark]{color-scheme:dark}
+.mdr-content{font-family:var(--font-family);font-size:1rem;line-height:1.5;font-weight:400;text-rendering:optimizeLegibility;letter-spacing:.2px;word-wrap:break-word}
+.mdr-content a{margin:initial}
+.mdr-content a{text-decoration:underline;color:var(--primary-color)}
+.mdr-content mark{padding:0 2px;border-radius:2px;background-color:var(--highlight-color)}
+.mdr-content ul{padding:0;margin:0}
+.mdr-content li{list-style:none}
+.mdr-content hr{border:none;border-top:1px solid var(--border-color);margin-top:2.7rem;margin-bottom:2.7rem}
+.mdr-content embed,.mdr-content iframe,.mdr-content img:not(.equation),.mdr-content video{max-width:100% !important;margin:0}
+.mdr-content img{opacity:var(--opacity-image);max-height:none}
+.mdr-content img[align=right]{float:right;width:120px !important;margin-top:0 !important;vertical-align:top}
+.mdr-content img.equation{margin:0 .1em;max-width:100% !important;vertical-align:text-bottom}
+.mdr-content table{display:block;width:-moz-max-content;width:max-content;max-width:100%;border-collapse:collapse;margin:1rem 0}
+.mdr-content thead{background:var(--bg-stripe);text-align:left}
+.mdr-content tr{border-top:1px solid var(--border-color)}
+.mdr-content tr:nth-child(2n){background:var(--bg-stripe)}
+.mdr-content th,.mdr-content td{border:1px solid var(--border-color);padding:.6em 1em}
+.mdr-content ol,.mdr-content ul{padding-left:28px}
+.mdr-content ol li,.mdr-content ul li{margin-bottom:.4em;list-style:inherit}
+.mdr-content ol ol,.mdr-content ol ul,.mdr-content ul ol,.mdr-content ul ul{margin-top:.27rem}
+.mdr-content ol li{padding-left:6px}
+.mdr-content p{margin-top:16px;margin-bottom:16px}
+.mdr-content figure{margin:22px auto;text-align:center}
+.mdr-content figure figcaption{line-height:1.6;text-align:center;font-size:1rem;margin-top:2px;color:var(--text-muted)}
+.mdr-content blockquote{padding:1px 18px;margin:22px 0;border-left:4px solid var(--border-color)}
+.mdr-content blockquote:after{display:block;content:""}
+.mdr-content blockquote:not(.info):not(.tip):not(.success):not(.warning):not(.danger)>:first-child{margin-top:0}
+.mdr-content blockquote:not(.info):not(.tip):not(.success):not(.warning):not(.danger)>:last-child{margin-bottom:0}
+.mdr-content blockquote>p{margin:10px 0}
+.mdr-content blockquote.info,.mdr-content blockquote.tip,.mdr-content blockquote.success,.mdr-content blockquote.warning,.mdr-content blockquote.danger{position:relative;padding-left:42px;border-left:none;border-radius:12px;background:var(--bg-block)}
+.mdr-content blockquote.tip{background:var(--primary-color-alpha-10)}
+.mdr-content blockquote.success{background:var(--success-color-alpha-10)}
+.mdr-content blockquote.warning{background:var(--warning-color-alpha-10)}
+.mdr-content blockquote.danger{background:var(--danger-color-alpha-10)}
+.mdr-content blockquote.info:before,.mdr-content blockquote.tip:before,.mdr-content blockquote.success:before,.mdr-content blockquote.warning:before,.mdr-content blockquote.danger:before{position:absolute;top:50%;left:16px;transform:translateY(-50%);text-align:center;width:17px;height:17px;line-height:17px;font-size:.8125rem;border-radius:50%;color:var(--color-white)}
+.mdr-content blockquote.info:before{content:"i";font-family:KaTeX_Main;background:var(--text-muted)}
+.mdr-content blockquote.tip:before{content:"?";background:var(--primary-color)}
+.mdr-content blockquote.success:before{content:"✓";font-size:.6875rem;background:var(--success-color)}
+.mdr-content blockquote.warning:before{content:"!";background:var(--warning-color)}
+.mdr-content blockquote.danger:before{content:"✕";font-size:.625rem;background:var(--danger-color)}
+.mdr-content math{font:400 1.21em KaTeX_Main,Times New Roman,serif}
+.mdr-content .footnotes{font-size:.75rem}
+.mdr-content .footnotes .footnotes-list,.mdr-content .footnotes .footnotes-list ul{padding-left:16px}
+.mdr-content code,.mdr-content pre{font-family:Menlo,Monaco,Consolas,Courier New,monospace}
+.mdr-content code{font-size:.88rem;word-break:break-word;padding:.065em .4em;border-radius:6px;background:var(--bg-code);color:var(--primary-color)}
+.mdr-content pre{position:relative;line-height:1.6}
+.mdr-content pre>code{display:block;font-size:.88rem;padding:.67rem 1rem;margin:0;word-break:normal;background:var(--hljs-base);color:var(--hljs-mono-1)}
+.mdr-content h1,.mdr-content h2,.mdr-content h3,.mdr-content h4,.mdr-content h5,.mdr-content h6{line-height:1.5;padding-bottom:5px;margin-top:35px;margin-bottom:10px}
+.mdr-content h1 code,.mdr-content h2 code,.mdr-content h3 code,.mdr-content h4 code,.mdr-content h5 code,.mdr-content h6 code{font-size:inherit}
+.mdr-content h1{font-size:2rem;margin:1.3rem 0;margin-bottom:5px}
+.mdr-content h2{font-size:1.5rem;padding-bottom:8px;border-bottom:1px solid var(--border-color)}
+.mdr-content h3{font-size:1.25rem;padding-bottom:0}
+.mdr-content h4{font-size:1rem}
+.mdr-content h5{font-size:.875rem}
+.mdr-content h6{font-size:.8125rem}
+.mdr-content .markdown-alert{padding:16px 22px;border-radius:12px;margin-bottom:16px;color:inherit}
+.mdr-content .markdown-alert>:first-child{margin-top:0}
+.mdr-content .markdown-alert>:last-child{margin-bottom:0}
+.mdr-content .markdown-alert .markdown-alert-title{display:flex;align-items:center;margin-bottom:10px;font-weight:700}
+.mdr-content .markdown-alert .markdown-alert-title+p{margin-top:0}
+.mdr-content .markdown-alert>p{margin-top:10px;margin-bottom:10px}
+.mdr-content .markdown-alert .markdown-alert-title:before{content:"";width:16px;height:16px;margin-right:8px;background-position:left;background-repeat:no-repeat}
+.mdr-content .markdown-alert.markdown-alert-note{background-color:var(--primary-color-alpha-10)}
+.mdr-content .markdown-alert.markdown-alert-note .markdown-alert-title{color:var(--primary-color)}
+.mdr-content .markdown-alert.markdown-alert-note .markdown-alert-title:before{background-image:url(data:image/svg+xml;utf8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20xmlns%3Axlink%3D%22http%3A%2F%2Fwww.w3.org%2F1999%2Fxlink%22%20viewBox%3D%220%200%2030%2030.00000191%22%3E%3Cg%20fill%3D%22%23607cd2%22%3E%3Cpath%20d%3D%22m15%2030c8.25%200%2015-6.75%2015-15s-6.75-15-15-15-15%206.75-15%2015%206.75%2015%2015%2015z%22%20opacity%3D%22.2%22%2F%3E%3Cpath%20d%3D%22m15%2030c8.25%200%2015-6.75%2015-15s-6.75-15-15-15-15%206.75-15%2015%206.75%2015%2015%2015zm0-2.2q5.2762%200%209.0381-3.7619%203.7619-3.7619%203.7619-9.0381%200-5.27623-3.7619-9.03812-3.7619-3.76188-9.0381-3.76188-5.27623%200-9.03812%203.76188-3.76188%203.76189-3.76188%209.03812%200%205.2762%203.76189%209.0381%203.76188%203.7619%209.03811%203.7619zm1.6667-18.8c0%201.1046-.8954%202-2%202-1.1045%200-2-.8954-2-2%200-1.10457.8955-2%202-2%201.1046%200%202%20.89543%202%202zm1.3333%2011.25v1.25c0%20.5523-.4477%201-1%201h-4c-.5523%200-1-.4477-1-1v-1.3333c0-.3682.2985-.6667.6667-.6667s.8333-.2985.8333-.6667v-2.6666c0-.3682-.4651-.6667-.8333-.6667s-.6667-.2985-.6667-.6667v-1.3333c0-.5523.4477-1%201-1h2.5c.5523%200%201%20.4477%201%201v5.25c0%20.4142.3358.75.75.75s.75.3358.75.75z%22%20fill-rule%3D%22evenodd%22%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E)}
+.mdr-content .markdown-alert.markdown-alert-important{background-color:var(--important-color-alpha-10)}
+.mdr-content .markdown-alert.markdown-alert-important .markdown-alert-title{color:var(--important-color)}
+.mdr-content .markdown-alert.markdown-alert-important .markdown-alert-title:before{background-image:url(data:image/svg+xml;utf8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%3E%3Cg%20fill%3D%22none%22%20stroke%3D%22%23a16cfd%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%20stroke-width%3D%222%22%3E%3Cpath%20d%3D%22M12%203v2%22%2F%3E%3Cpath%20fill%3D%22%23a16cfd%22%20fill-opacity%3D%220.3%22%20d%3D%22M12%205c-3.31%200%20-6%202.69%20-6%206l0%206c-1%200%20-2%201%20-2%202h8M12%205c3.31%200%206%202.69%206%206l0%206c1%200%202%201%202%202h-8%22%2F%3E%3Cpath%20d%3D%22M10%2020c0%201.1%200.9%202%202%202c1.1%200%202%20-0.9%202%20-2%22%2F%3E%3Cpath%20d%3D%22M22%206v4%22%2F%3E%3Cpath%20d%3D%22M22%2014v0.01%22%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E)}
+.mdr-content .markdown-alert.markdown-alert-tip{background-color:var(--success-color-alpha-10)}
+.mdr-content .markdown-alert.markdown-alert-tip .markdown-alert-title{color:var(--success-color)}
+.mdr-content .markdown-alert.markdown-alert-tip .markdown-alert-title:before{background-image:url("data:image/svg+xml;utf8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20xmlns%3Axlink%3D%22http%3A%2F%2Fwww.w3.org%2F1999%2Fxlink%22%20viewBox%3D%220%200%2030%2030%22%3E%3Cg%20clip-path%3D%22url(%23a)%22%20fill%3D%22%232fc178%22%3E%3Cpath%20d%3D%22m17.33336651%2012.66666349c0-4.04-3.2934-7.33333-7.33337-7.33333-4.04%200-7.33333%203.29333-7.33333%207.33333%200%203.29337%201.98667%205.18667%203.13333%205.99997h8.39997c1.1467-.8133%203.1334-2.7066%203.1334-5.99997z%22%20opacity%3D%22.3%22%2F%3E%3Cpath%20d%3D%22m7.33333%2026.6667h5.33337c0%201.4666-1.2%202.6666-2.6667%202.6666-1.46667%200-2.66667-1.2-2.66667-2.6666zm-2.66666-1.3334h10.66663v-2.6666h-10.66663zm15.33333-12.6666c0%205.0933-3.5467%207.8133-5.0267%208.6666h-9.94663c-1.48-.8533-5.02667-3.5733-5.02667-8.6666%200-5.52003%204.48-10.00003%2010-10.00003s10%204.48%2010%2010.00003zm-2.6667%200c0-4.04003-3.2933-7.33337-7.3333-7.33337s-7.33333%203.29334-7.33333%207.33337c0%203.2933%201.98666%205.1866%203.13333%206h8.4c1.1467-.8134%203.1333-2.7067%203.1333-6zm9.16-2.84003-1.8266.84003%201.8266.84.84%201.8266.84-1.8266%201.8267-.84-1.8267-.84003-.84-1.82667zm-3.16-1.82667%201.2534-2.74667%202.7466-1.25333-2.7466-1.25333-1.2534-2.74667-1.2533%202.74667-2.7467%201.25333%202.7467%201.25333z%22%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E")}
+.mdr-content .markdown-alert.markdown-alert-warning{background-color:var(--warning-color-alpha-10)}
+.mdr-content .markdown-alert.markdown-alert-warning .markdown-alert-title{color:var(--warning-color)}
+.mdr-content .markdown-alert.markdown-alert-warning .markdown-alert-title:before{background-image:url(data:image/svg+xml;utf8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2028.00146484%2025.00024414%22%3E%3Cg%20fill%3D%22%23f6bb42%22%3E%3Cpath%20d%3D%22m24.93386858%2024.00003193h-21.86503c-1.577498%200-2.567498-1.6512-1.801248-2.9887l10.932478-18.98375c.7875-1.375%202.815-1.375%203.6025%200l10.9325%2018.98375c.7663%201.3375-.2237%202.9887-1.8012%202.9887z%22%20opacity%3D%22.2%22%2F%3E%3Cpath%20d%3D%22m27.6013%2020.5113-10.9312-18.98372c-1.1963-2.036774-4.1413-2.036774-5.3375%200l-10.93126%2018.98372c-.53512.9159-.53512%202.0491%200%202.965.549048.9527%201.56924%201.5352%202.66875%201.5238h21.86251c1.0986.0105%202.1176-.5719%202.6662-1.5238.5359-.9154.5369-2.0486.0025-2.965zm-1.7337%201.9638c-.194.331-.5514.5316-.935.525h-21.86251c-.38359.0066-.74098-.194-.935-.525-.1758-.2977-.1758-.6674%200-.965l10.93121-18.98377c.425-.70717%201.4501-.70717%201.875%200l10.9313%2018.98377c.1743.2985.1723.6682-.005.965zm-12.8663-7.475v-5c0-.5523.4478-1.00002%201-1.00002.5523%200%201%20.44772%201%201.00002v5c0%20.5523-.4477%201-1%201-.5522%200-1-.4477-1-1zm2.5%204.5c0%20.8284-.6715%201.5-1.5%201.5-.8284%200-1.5-.6716-1.5-1.5s.6716-1.5%201.5-1.5c.8285%200%201.5.6716%201.5%201.5z%22%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E)}
+.mdr-content .markdown-alert.markdown-alert-caution{background-color:var(--danger-color-alpha-10)}
+.mdr-content .markdown-alert.markdown-alert-caution .markdown-alert-title{color:var(--danger-color)}
+.mdr-content .markdown-alert.markdown-alert-caution .markdown-alert-title:before{background-image:url(data:image/svg+xml;utf8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20xmlns%3Axlink%3D%22http%3A%2F%2Fwww.w3.org%2F1999%2Fxlink%22%20viewBox%3D%220%200%2030%2030.00000191%22%3E%3Cg%20fill%3D%22%23ff6767%22%3E%3Cpath%20d%3D%22m27.77777397%209.38190373v10.12497c.0002.2948-.1167.5776-.325.7861l-7.1598%207.1598c-.2085.2083-.4913.3252-.7861.325h-10.12497c-.29477.0002-.57756-.1167-.78611-.325l-7.159719-7.1598c-.208321-.2085-.325232-.4913-.3250002-.7861v-10.12497c-.00023127-.29477.1166802-.57755.3250002-.78611l7.159719-7.159718c.20855-.208321.49134-.32523326.78611-.32500173h10.12497c.2948-.0002318.5776.11667973.7861.32499973l7.1598%207.15972c.2083.20855.3252.49134.325.78611z%22%20opacity%3D%22.3%22%2F%3E%3Cpath%20d%3D%22m13.33328999%2015.55558975v-7.77781c0-.61365.4975-1.11111%201.1112-1.11111.6136%200%201.1111.49746%201.1111%201.11111v7.77781c0%20.6136-.4975%201.1111-1.1111%201.1111-.6137%200-1.1112-.4975-1.1112-1.1111zm15.5556-6.17364v10.12504c.0019.5897-.2328%201.1555-.6514%201.5708l-7.1597%207.1597c-.4153.4187-.9812.6533-1.5708.6514h-10.12504c-.5897.0019-1.15553-.2328-1.57084-.6514l-7.15972-7.1597c-.418638-.4153-.65327318-.9812-.65138888-1.5708v-10.12504c-.00188377-.5897.23275188-1.15553.65138888-1.57084l7.15972-7.15972c.41531-.418637.98114-.65327265%201.57084-.65138861h10.12504c.5897-.00188457%201.1555.23275161%201.5708.65138861l7.1597%207.15972c.4186.41532.6533.98114.6514%201.57084zm-2.2222%200-7.1597-7.15973h-10.12504l-7.15973%207.15973v10.12504l7.15973%207.1597h10.12504l7.1597-7.1597zm-12.2222%209.50694c-.9205%200-1.6667.7462-1.6667%201.6667%200%20.9204.7462%201.6666%201.6667%201.6666.9204%200%201.6666-.7462%201.6666-1.6666%200-.9205-.7462-1.6667-1.6666-1.6667z%22%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E)}
+body.mdr-pre{color:var(--text-base);background:var(--bg-base)}
+body.mdr{margin:0;padding:0}

@@ -4,7 +4,6 @@ import {
   Cell,
   CellOutput,
   CodeCell,
-  ErrorOutput,
   MarkdownCell,
   MimeBundle,
   Notebook,
@@ -18,7 +17,13 @@ marked.setOptions({
 });
 
 // eslint-disable-next-line no-control-regex
-const ANSI_ESCAPE = /\x1b\[[0-9;]*m/g;
+const ANSI_SGR = /\x1b\[([0-9;]*)m/g;
+
+// ansi2html's inline palette, which nb_convert.py uses for coloured outputs.
+const ANSI_COLORS = ['#000316', '#aa0000', '#00aa00', '#aa5500', '#0000aa', '#E850A8', '#00aaaa', '#F5F1DE'];
+const ANSI_BRIGHT = ['#7f7f7f', '#ff0000', '#00ff00', '#ffff00', '#5c5cff', '#ff00ff', '#00ffff', '#ffffff'];
+
+const RICH_MIME = ['image/png', 'image/jpeg', 'image/svg+xml', 'text/html', 'text/markdown'];
 
 export function renderNotebook(nb: Notebook): string {
   const language =
@@ -68,7 +73,7 @@ function renderCodeCell(cell: CodeCell, language: string): string {
   const lineCount = source.split('\n').length;
   const lineNumbers = Array.from({ length: lineCount }, (_, i) => i + 1).join('\n');
 
-  const outputs = (cell.outputs ?? []).map(renderOutput).join('\n');
+  const outputs = renderOutputs(cell.outputs ?? []);
   const outputsBlock = outputs
     ? `<div class="jp-Cell-outputWrapper">${outputs}</div>`
     : '';
@@ -84,57 +89,87 @@ function renderCodeCell(cell: CodeCell, language: string): string {
 </div>`;
 }
 
-function renderOutput(output: CellOutput): string {
+// nb_convert.py goes through `nbconvert --to markdown`, where every text output
+// (stream, text/plain result, error traceback) becomes an indented block and
+// consecutive blocks fuse into one <pre> with a blank line between them. Mirror
+// that grouping so a cell gets one box per run of text outputs.
+function renderOutputs(outputs: CellOutput[]): string {
+  const blocks: string[] = [];
+  let run: { text: string; cls: string }[] = [];
+  const flush = () => {
+    if (run.length === 0) {
+      return;
+    }
+    const text = run.map((o) => o.text).join('\n\n').replace(/\n+$/, '');
+    const cls = run.find((o) => o.cls === 'jp-OutputArea-error')?.cls ?? run.find((o) => o.cls)?.cls ?? '';
+    blocks.push(
+      `<div class="jp-OutputArea${cls ? ` ${cls}` : ''}"><pre class="jp-RenderedText">${ansiToHtml(text)}</pre></div>`
+    );
+    run = [];
+  };
+  for (const output of outputs) {
+    const text = textOutput(output);
+    if (text) {
+      run.push(text);
+      continue;
+    }
+    flush();
+    blocks.push(renderRich(output));
+  }
+  flush();
+  return blocks.filter(Boolean).join('\n');
+}
+
+// Plain text of an output that has no richer representation, else undefined.
+function textOutput(output: CellOutput): { text: string; cls: string } | undefined {
   switch (output.output_type) {
     case 'stream':
-      return renderStream(output.name, joinSource(output.text));
-    case 'display_data':
-    case 'execute_result':
-      return renderMime(output.data);
+      return { text: joinSource(output.text), cls: output.name === 'stderr' ? 'jp-OutputArea-stderr' : '' };
     case 'error':
-      return renderError(output);
+      return { text: (output.traceback ?? []).join('\n'), cls: 'jp-OutputArea-error' };
+    case 'display_data':
+    case 'execute_result': {
+      const data = output.data;
+      if (RICH_MIME.some((mime) => data[mime]) || !data['text/plain']) {
+        return undefined;
+      }
+      return { text: joinSource(data['text/plain'] as string | string[]), cls: '' };
+    }
     default:
-      return '';
+      return undefined;
   }
 }
 
-function renderStream(name: string, text: string): string {
-  const cls = name === 'stderr' ? 'jp-OutputArea-stderr' : 'jp-OutputArea-stdout';
-  return `<div class="jp-OutputArea ${cls}"><pre class="jp-RenderedText">${escapeHtml(stripAnsi(text))}</pre></div>`;
+function renderRich(output: CellOutput): string {
+  if (output.output_type !== 'display_data' && output.output_type !== 'execute_result') {
+    return '';
+  }
+  return renderMime(output.data);
 }
 
 function renderMime(data: MimeBundle): string {
   // Priority order — pick the richest representation Jupyter would show.
   if (data['image/png']) {
     const src = `data:image/png;base64,${(data['image/png'] as string).trim()}`;
-    return `<div class="jp-OutputArea"><img class="jp-OutputImage" src="${src}" /></div>`;
+    return `<div class="jp-OutputArea jp-OutputArea-image"><img class="jp-OutputImage" src="${src}" /></div>`;
   }
   if (data['image/jpeg']) {
     const src = `data:image/jpeg;base64,${(data['image/jpeg'] as string).trim()}`;
-    return `<div class="jp-OutputArea"><img class="jp-OutputImage" src="${src}" /></div>`;
+    return `<div class="jp-OutputArea jp-OutputArea-image"><img class="jp-OutputImage" src="${src}" /></div>`;
   }
   if (data['image/svg+xml']) {
     const svg = joinSource(data['image/svg+xml'] as string | string[]);
-    return `<div class="jp-OutputArea"><div class="jp-OutputImage">${svg}</div></div>`;
+    return `<div class="jp-OutputArea jp-OutputArea-image"><div class="jp-OutputImage">${svg}</div></div>`;
   }
   if (data['text/html']) {
     const html = joinSource(data['text/html'] as string | string[]);
-    return `<div class="jp-OutputArea"><div class="jp-RenderedHTML">${html}</div></div>`;
+    return `<div class="jp-OutputArea jp-OutputArea-html"><div class="jp-RenderedHTML">${html}</div></div>`;
   }
   if (data['text/markdown']) {
     const html = marked.parse(joinSource(data['text/markdown'] as string | string[])) as string;
-    return `<div class="jp-OutputArea"><div class="markdown-body">${html}</div></div>`;
-  }
-  if (data['text/plain']) {
-    const text = joinSource(data['text/plain'] as string | string[]);
-    return `<div class="jp-OutputArea"><pre class="jp-RenderedText">${escapeHtml(text)}</pre></div>`;
+    return `<div class="jp-OutputArea jp-OutputArea-html"><div class="markdown-body">${html}</div></div>`;
   }
   return '';
-}
-
-function renderError(output: ErrorOutput): string {
-  const traceback = (output.traceback ?? []).map(stripAnsi).join('\n');
-  return `<div class="jp-OutputArea jp-OutputArea-error"><pre class="jp-RenderedText">${escapeHtml(traceback)}</pre></div>`;
 }
 
 function highlightCode(source: string, language: string): string {
@@ -148,8 +183,45 @@ function highlightCode(source: string, language: string): string {
   return escapeHtml(source);
 }
 
-function stripAnsi(text: string): string {
-  return text.replace(ANSI_ESCAPE, '');
+// ANSI SGR escapes → inline-styled spans (bold and the 16 foreground colours),
+// the subset Jupyter outputs use. Unknown codes are dropped.
+function ansiToHtml(text: string): string {
+  let html = '';
+  let last = 0;
+  let open = false;
+  let bold = false;
+  let color: string | undefined;
+  for (const match of text.matchAll(ANSI_SGR)) {
+    html += escapeHtml(text.slice(last, match.index));
+    last = (match.index ?? 0) + match[0].length;
+    for (const code of (match[1] || '0').split(';').map(Number)) {
+      if (code === 0) {
+        bold = false;
+        color = undefined;
+      } else if (code === 1) {
+        bold = true;
+      } else if (code === 22) {
+        bold = false;
+      } else if (code === 39) {
+        color = undefined;
+      } else if (code >= 30 && code <= 37) {
+        color = ANSI_COLORS[code - 30];
+      } else if (code >= 90 && code <= 97) {
+        color = ANSI_BRIGHT[code - 90];
+      }
+    }
+    if (open) {
+      html += '</span>';
+      open = false;
+    }
+    const style = [bold ? 'font-weight: bold' : '', color ? `color: ${color}` : ''].filter(Boolean).join('; ');
+    if (style) {
+      html += `<span style="${style}">`;
+      open = true;
+    }
+  }
+  html += escapeHtml(text.slice(last));
+  return open ? `${html}</span>` : html;
 }
 
 function escapeHtml(text: string): string {

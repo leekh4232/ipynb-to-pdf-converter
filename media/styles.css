@@ -127,16 +127,40 @@ html, body {
   height: auto;
 }
 
-/* HTML outputs (e.g. pandas DataFrames) — github-style tables */
+/* HTML outputs (e.g. pandas DataFrames) — github-style tables.
+   html2canvas has no border-collapse (shared edges come out doubled), so the
+   1px grid is built from separate borders on one side of each cell. The same
+   applies to markdown tables, whose github-markdown.css grid is collapsed. */
+.jp-RenderedHTML table,
+.markdown-body table {
+  border-collapse: separate;
+  border-spacing: 0;
+  border: 0; /* also drops the right/bottom outset border that <table border="1"> (pandas) adds */
+  border-top: 1px solid #d0d7de;
+  border-left: 1px solid #d0d7de;
+}
+
 .jp-RenderedHTML table {
-  border-collapse: collapse;
   margin: 6px 0;
   font-size: 13px;
 }
 
+.jp-RenderedHTML tr,
+.markdown-body table tr {
+  border: 0;
+}
+
+.jp-RenderedHTML th,
+.jp-RenderedHTML td,
+.markdown-body table th,
+.markdown-body table td {
+  border: 0;
+  border-right: 1px solid #d0d7de;
+  border-bottom: 1px solid #d0d7de;
+}
+
 .jp-RenderedHTML th,
 .jp-RenderedHTML td {
-  border: 1px solid #d0d7de;
   padding: 6px 12px;
   text-align: left;
 }

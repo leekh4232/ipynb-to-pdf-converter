@@ -5,6 +5,31 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.7.0] - 2026-10-23
+
+Aligns the extension with `nb_convert.py`.
+
+### Added
+- **`pdfTheme` setting** (`default` | `light` | `dark`, default `light`): overall page theme ported from `nb_convert.py --theme`. `light`/`dark` use the Markdown Reader palette (`media/page-themes/mdr.css`, a verbatim copy of the script's `MDR_CSS`); `default` keeps the GitHub look. Code cells still follow `codeTheme`; the `leekh` chrome applies only with `default`.
+- **`pdfPageSize` / `pdfPageOrientation` settings**: paper sizes A3, A4 (default), A5, B4/B5 (JIS), Letter, Legal and a 16:9 Widescreen slide (the script's horizontal mode), portrait or landscape. Pages are laid out at 96 dpi so the PDF has the exact physical size.
+- **`pdfPassword` setting** and a second command **"Convert Notebook/Markdown to PDF (with Password)"** (context menus and palette). It encrypts with the configured password, or prompts when none is set. Permissions mirror `secure_pdf_with_pikepdf`: annotations/forms allowed, print/copy/edit denied. The plain command never encrypts. Encryption is 40-bit RC4 (jsPDF).
+
+- **`mdr-dark` / `mdr-light` code themes** (default `mdr-dark`): the Markdown Reader One Dark/Light palettes from `nb_convert.py --code-theme`.
+- **Pagination like WeasyPrint**: pages no longer cut through a line of text, a table row or an image; a heading stays with what follows; every `h1` after the first starts a new page (`h1:not(:first-of-type) { break-before: page }`).
+- **ANSI colours** in outputs (stream, results, tracebacks) are rendered with ansi2html's palette instead of being stripped.
+- **Running header and footer**: the file name (without extension) at the top right and `page / total` at the bottom right of every page, 10 px grey, centred in the margin band. Drawn in the webview, so Korean names need no embedded PDF font.
+
+### Changed
+- **`light`/`dark` page themes reproduce `nb_convert.py`'s vertical (A4) layout exactly**: Helvetica Neue + Noto Sans CJK KR body, `.9em` text, code cells without line numbers (Menlo 12.24 px, rounded box, 20 px margins), compact output boxes (11.56 px, line-height 1.1, 4 px left accent), full-width tables with a snug bold first column and striped rows, centred images, and consecutive text outputs merged into one box with a blank line between them, as `nbconvert --to markdown` + pandoc produce.
+- **`pdfPageMargin` default is now `48`** (0.5 in, the script's `@page` margin). The Markdown Reader themes add the script's 30 px body margin inside it: both sides of every page, top of the first page and bottom of the last.
+- Dark page theme paints the paper color across the whole page, margins included.
+
+### Fixed
+- **Table borders rendered doubled/heavier than `nb_convert.py`**: html2canvas has no `border-collapse`, so every cell's border was painted on the shared edge. All themes now build the 1px grid from one-sided separate borders.
+
+### Removed
+- **`pdfPageWidth` / `pdfPageHeight`** (CSS px). Use `pdfPageSize` + `pdfPageOrientation` instead; the Galaxy Tab preset is gone.
+
 ## [0.5.0] - 2026-05-22
 
 ### Added

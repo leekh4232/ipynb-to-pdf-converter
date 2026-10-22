@@ -1,0 +1,68 @@
+/*
+ * Markdown Reader "One Light" code palette — the --hljs-* values of
+ * :root[data-mdr-code-block-theme=light] in nb_convert.py's MDR_CSS, mapped onto
+ * highlight.js classes the same way as Atom One Light (which the palette derives from).
+ */
+.hljs {
+  color: hsl(220, 8%, 20%);
+  background: hsl(220, 29%, 97%);
+}
+.hljs-comment,
+.hljs-quote {
+  color: hsl(220, 4%, 54%);
+  font-style: italic;
+}
+.hljs-doctag,
+.hljs-keyword,
+.hljs-formula {
+  color: hsl(301, 63%, 40%);
+}
+.hljs-section,
+.hljs-name,
+.hljs-selector-tag,
+.hljs-deletion,
+.hljs-subst {
+  color: hsl(5, 74%, 59%);
+}
+.hljs-literal {
+  color: hsl(198, 99%, 37%);
+}
+.hljs-string,
+.hljs-regexp,
+.hljs-addition,
+.hljs-attribute,
+.hljs-meta .hljs-string {
+  color: hsl(119, 34%, 47%);
+}
+.hljs-attr,
+.hljs-variable,
+.hljs-template-variable,
+.hljs-type,
+.hljs-selector-class,
+.hljs-selector-attr,
+.hljs-selector-pseudo,
+.hljs-number {
+  color: hsl(35, 99%, 36%);
+}
+.hljs-symbol,
+.hljs-bullet,
+.hljs-link,
+.hljs-meta,
+.hljs-selector-id,
+.hljs-title {
+  color: hsl(221, 87%, 60%);
+}
+.hljs-built_in,
+.hljs-title.class_,
+.hljs-class .hljs-title {
+  color: hsl(35, 99%, 40%);
+}
+.hljs-emphasis {
+  font-style: italic;
+}
+.hljs-strong {
+  font-weight: bold;
+}
+.hljs-link {
+  text-decoration: underline;
+}

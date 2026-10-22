@@ -1,7 +1,7 @@
 {
   "name": "ipynb-pdf-converter",
   "displayName": "Ipynb PDF Converter",
-  "description": "Convert Jupyter Notebook (.ipynb) and Markdown (.md) files to PDF documents, optimized for smartphone/tablet viewing.",
+  "description": "Convert Jupyter Notebook (.ipynb) and Markdown (.md) files to paginated PDF documents on standard paper sizes (A4, A3, B5, …) with light/dark page themes and optional password protection.",
   "version": "0.6.0",
   "publisher": "leekh",
   "repository": {
@@ -26,6 +26,11 @@
         "command": "ipynb-pdf-converter.convertToPdf",
         "title": "Convert Notebook/Markdown to PDF",
         "category": "Jupyter"
+      },
+      {
+        "command": "ipynb-pdf-converter.convertToPdfWithPassword",
+        "title": "Convert Notebook/Markdown to PDF (with Password)",
+        "category": "Jupyter"
       }
     ],
     "menus": {
@@ -34,6 +39,11 @@
           "command": "ipynb-pdf-converter.convertToPdf",
           "when": "resourceExtname == .ipynb || resourceExtname == .md",
           "group": "navigation@98"
+        },
+        {
+          "command": "ipynb-pdf-converter.convertToPdfWithPassword",
+          "when": "resourceExtname == .ipynb || resourceExtname == .md",
+          "group": "navigation@99"
         }
       ],
       "editor/title/context": [
@@ -41,11 +51,20 @@
           "command": "ipynb-pdf-converter.convertToPdf",
           "when": "resourceExtname == .ipynb || resourceExtname == .md",
           "group": "navigation@98"
+        },
+        {
+          "command": "ipynb-pdf-converter.convertToPdfWithPassword",
+          "when": "resourceExtname == .ipynb || resourceExtname == .md",
+          "group": "navigation@99"
         }
       ],
       "commandPalette": [
         {
           "command": "ipynb-pdf-converter.convertToPdf",
+          "when": "resourceExtname == .ipynb || resourceExtname == .md || activeEditor == 'workbench.editor.notebook'"
+        },
+        {
+          "command": "ipynb-pdf-converter.convertToPdfWithPassword",
           "when": "resourceExtname == .ipynb || resourceExtname == .md || activeEditor == 'workbench.editor.notebook'"
         }
       ]
@@ -60,31 +79,68 @@
           "maximum": 5,
           "description": "Rendering scale factor for PDF resolution (1-5). Higher values produce sharper pages."
         },
-        "ipynb-pdf-converter.pdfPageWidth": {
-          "type": "number",
-          "default": 640,
-          "minimum": 360,
-          "maximum": 2400,
-          "description": "Width of each PDF page in CSS pixels. Default optimized for Galaxy Tab S9 portrait (800 × 1280 CSS px)."
+        "ipynb-pdf-converter.pdfPageSize": {
+          "type": "string",
+          "default": "A4",
+          "enum": [
+            "A3",
+            "A4",
+            "A5",
+            "B4",
+            "B5",
+            "Letter",
+            "Legal",
+            "Widescreen"
+          ],
+          "enumDescriptions": [
+            "A3 (297 × 420 mm)",
+            "A4 (210 × 297 mm)",
+            "A5 (148 × 210 mm)",
+            "B4 (JIS, 257 × 364 mm)",
+            "B5 (JIS, 182 × 257 mm)",
+            "Letter (8.5 × 11 in)",
+            "Legal (8.5 × 14 in)",
+            "Widescreen 16:9 slide (13.333 × 7.5 in, nb_convert.py horizontal mode; use with landscape orientation)"
+          ],
+          "description": "Paper size of each PDF page. Content is laid out at 96 dpi (A4 portrait ≈ 794 × 1123 CSS px) and split across pages."
         },
-        "ipynb-pdf-converter.pdfPageHeight": {
-          "type": "number",
-          "default": 1280,
-          "minimum": 480,
-          "maximum": 4000,
-          "description": "Height of each PDF page in CSS pixels. Content longer than this is split across multiple pages. Default optimized for Galaxy Tab S9 portrait."
+        "ipynb-pdf-converter.pdfPageOrientation": {
+          "type": "string",
+          "default": "portrait",
+          "enum": [
+            "portrait",
+            "landscape"
+          ],
+          "description": "Page orientation."
         },
         "ipynb-pdf-converter.pdfPageMargin": {
           "type": "number",
-          "default": 32,
+          "default": 48,
           "minimum": 0,
           "maximum": 200,
-          "description": "Inner margin around content on every PDF page, in CSS pixels. Applied on all four sides of every page."
+          "description": "Page margin on all four sides, in CSS pixels (48 px = 0.5 in, nb_convert.py's @page margin). The Markdown Reader page themes add the script's 30 px body margin inside it: on both sides of every page, and above/below the document on the first/last page."
+        },
+        "ipynb-pdf-converter.pdfTheme": {
+          "type": "string",
+          "default": "light",
+          "enum": [
+            "default",
+            "light",
+            "dark"
+          ],
+          "enumDescriptions": [
+            "Default: GitHub document style (github-markdown.css)",
+            "Light: Markdown Reader light palette (nb_convert.py --theme light)",
+            "Dark: Markdown Reader dark palette (nb_convert.py --theme dark)"
+          ],
+          "description": "Overall page theme (paper, text, headings, tables, outputs), ported from nb_convert.py. Code cells always use 'codeTheme'. The 'leekh' chrome (emoji headings) applies only with 'default'."
         },
         "ipynb-pdf-converter.codeTheme": {
           "type": "string",
-          "default": "dracula",
+          "default": "mdr-dark",
           "enum": [
+            "mdr-dark",
+            "mdr-light",
             "dracula",
             "github",
             "github-dark",
@@ -96,6 +152,8 @@
             "leekh"
           ],
           "enumDescriptions": [
+            "Markdown Reader Dark (nb_convert.py --code-theme dark)",
+            "Markdown Reader Light (nb_convert.py --code-theme light)",
             "Dracula",
             "GitHub Light",
             "GitHub Dark",
@@ -106,7 +164,12 @@
             "Visual Studio Dark",
             "Leekh (vertical/A4 print style: emoji headings, colored sections, accented outputs)"
           ],
-          "description": "Syntax highlighting theme for source code cells. 'leekh' also restyles headings, tables, and outputs to match the A4 print layout."
+          "description": "Syntax highlighting theme for source code cells. 'leekh' also restyles headings, tables, and outputs to match the A4 print layout when pdfTheme is 'default'."
+        },
+        "ipynb-pdf-converter.pdfPassword": {
+          "type": "string",
+          "default": "",
+          "description": "Default password for 'Convert Notebook/Markdown to PDF (with Password)'. Leave empty to be prompted each time. The plain convert command never applies it. Stored in plain text in settings; encryption is 40-bit RC4 (jsPDF), which deters casual opening but is not strong protection."
         }
       }
     }
