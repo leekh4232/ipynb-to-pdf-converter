@@ -22,3 +22,4 @@ out/test/**
 *.py
 *.pdf
 *.txt
+*.ipynb
