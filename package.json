@@ -2,7 +2,7 @@
   "name": "ipynb-pdf-converter",
   "displayName": "Ipynb PDF Converter",
   "description": "Convert Jupyter Notebook (.ipynb) and Markdown (.md) files to paginated PDF documents on standard paper sizes (A4, A3, B5, …) with light/dark page themes and optional password protection.",
-  "version": "0.6.0",
+  "version": "0.7.0",
   "publisher": "leekh",
   "repository": {
     "type": "git",
