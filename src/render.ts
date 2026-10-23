@@ -6,6 +6,7 @@ import {
   CodeCell,
   MarkdownCell,
   MimeBundle,
+  MultilineString,
   Notebook,
   RawCell,
   joinSource,
@@ -60,7 +61,33 @@ function renderCell(cell: Cell, language: string): string {
 }
 
 function renderMarkdownCell(cell: MarkdownCell): string {
-  return markdownCellHtml(marked.parse(joinSource(cell.source)) as string);
+  let html = marked.parse(joinSource(cell.source)) as string;
+  if (cell.attachments) {
+    html = resolveAttachments(html, cell.attachments);
+  }
+  return markdownCellHtml(html);
+}
+
+// ![x](attachment:name) refers to an image stored base64-encoded in the cell.
+function resolveAttachments(html: string, attachments: Record<string, MimeBundle>): string {
+  return html.replace(
+    /(<img\b[^>]*?\bsrc\s*=\s*)(["'])attachment:([^"']+)\2/gi,
+    (whole, prefix: string, quote: string, name: string) => {
+      let key = name;
+      try {
+        key = decodeURIComponent(name);
+      } catch {
+        // keep the raw name
+      }
+      const bundle = attachments[key] ?? attachments[name];
+      const mime = bundle && Object.keys(bundle).find((k) => k.startsWith('image/'));
+      if (!mime) {
+        return whole;
+      }
+      const data = joinSource(bundle[mime] as MultilineString).trim();
+      return `${prefix}${quote}data:${mime};base64,${data}${quote}`;
+    }
+  );
 }
 
 function renderRawCell(cell: RawCell): string {

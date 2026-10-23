@@ -12,6 +12,7 @@ VSCode 익스텐션으로 Jupyter Notebook (.ipynb) 및 Markdown (.md) 파일을
 - 일반 용지 규격으로 출력 (A3 · A4 · A5 · B4 · B5 · Letter · Legal · 16:9 와이드스크린, 세로/가로)
 - 페이지 나누기: 글줄·표의 행·그림 중간에서 잘리지 않고, 두 번째 h1부터는 새 페이지에서 시작 (`nb_convert.py`와 동일)
 - 머릿말·꼬릿말: 우측 상단에 파일명, 우측 하단에 `쪽 / 전체` 페이지 번호 (10 px 회색, 페이지 여백 띠 안에 배치)
+- 문서가 참조하는 이미지(상대·절대 경로, `file:`·`http(s)` URL, 노트북 셀 첨부 `attachment:`)를 PDF에 포함. 찾지 못한 이미지는 출력 채널에 경고로 표시
 - 페이지 테마 3종 (`nb_convert.py`의 `--theme`와 동일): `light`(기본값)·`dark`(Markdown Reader 팔레트), `default`(GitHub 문서 스타일)
   - `light`·`dark`는 `nb_convert.py`의 세로(A4) 출력과 같은 레이아웃: 줄 번호 없는 코드 박스, 왼쪽 강조선이 있는 출력 박스, 전체 폭 표, 가운데 정렬 그림, ANSI 색상 출력
 - 코드 셀 신택스 하이라이트 테마 11종 — `mdr-dark`(기본값, `nb_convert.py --code-theme dark`)·`mdr-light`, Dracula, GitHub Light/Dark, Atom One Light/Dark, Monokai, Nord, VS Dark, Leekh

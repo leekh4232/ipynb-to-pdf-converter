@@ -5,6 +5,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.7.1] - 2026-10-23
+
+### Added
+- **Extension icon** (`media/icon.png`, source `media/icon.svg`): a notebook page with a code cell turning into a PDF.
+
+### Fixed
+- **Images referenced by Markdown files (and notebook markdown cells) were missing from the PDF.** The webview may only load the extension's own media folder, so `<img src>` paths never resolved. Referenced images (relative/absolute paths, `file:` and `http(s)` URLs) are now embedded as `data:` URLs before rendering, and `attachment:` images stored in notebook cells are resolved too. Images that cannot be read are listed as warnings in the output channel.
+
 ## [0.7.0] - 2026-10-23
 
 Aligns the extension with `nb_convert.py`.

@@ -7,6 +7,7 @@ import { renderNotebook, renderMarkdown } from './render';
 import { Notebook } from './notebook';
 import { isDarkColor, resolvePageTheme, resolveTheme, PageThemeInfo, ThemeInfo } from './themes';
 import { resolvePageDimensions } from './paper';
+import { inlineImages } from './images';
 
 let outputChannel: vscode.OutputChannel;
 
@@ -93,9 +94,15 @@ async function convertToPdf(
 
   try {
     const raw = await fs.readFile(filePath, 'utf-8');
-    const bodyHtml = filePath.toLowerCase().endsWith('.md')
+    const rendered = filePath.toLowerCase().endsWith('.md')
       ? renderMarkdown(raw)
       : renderNotebook(JSON.parse(raw) as Notebook);
+    // Referenced images (relative/absolute paths, file: or http(s) URLs) are
+    // embedded as data: URLs; the webview cannot load them from disk itself.
+    const { html: bodyHtml, failures } = await inlineImages(rendered, path.dirname(filePath));
+    for (const failure of failures) {
+      outputChannel.appendLine(`⚠️ Image not embedded: ${failure}`);
+    }
 
     const config = vscode.workspace.getConfiguration('ipynb-pdf-converter');
     const scale = clamp(config.get<number>('deviceScaleFactor', 3), 1, 5);

@@ -18,6 +18,8 @@ export interface MarkdownCell {
   cell_type: 'markdown';
   source: MultilineString;
   metadata?: Record<string, unknown>;
+  // Images pasted into the cell: ![x](attachment:name) -> attachments[name] = { 'image/png': base64 }
+  attachments?: Record<string, MimeBundle>;
 }
 
 export interface RawCell {
