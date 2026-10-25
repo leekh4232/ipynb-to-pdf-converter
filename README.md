@@ -16,6 +16,8 @@ Python도 Chromium도 설치하지 않습니다. VS Code 안에서 렌더링부�
 [![Homepage](https://img.shields.io/badge/%EC%86%8C%EA%B0%9C%20%ED%8E%98%EC%9D%B4%EC%A7%80-ipynb--to--pdf.hossam.kr-24292f)](https://ipynb-to-pdf.hossam.kr/)
 [![License MIT](https://img.shields.io/badge/license-MIT-2ea44f)](LICENSE)
 
+🌐 **소개 페이지 · [ipynb-to-pdf.hossam.kr](https://ipynb-to-pdf.hossam.kr/)**
+
 </div>
 
 <br>
