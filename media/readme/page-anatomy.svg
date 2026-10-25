@@ -1,0 +1,89 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="680" height="460" viewBox="0 0 680 460" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,'Apple SD Gothic Neo','Malgun Gothic','Noto Sans KR',sans-serif">
+  <!-- README: one output page and the settings that shape each part of it. -->
+  <rect x="0.5" y="0.5" width="679" height="459" rx="14" fill="#ffffff" stroke="#d0d7de"/>
+
+  <!-- page: margin band (pdfPageMargin) is the tinted ring, body is white -->
+  <rect x="36" y="30" width="272" height="385" rx="4" fill="#eef1f6" stroke="#b6bec9"/>
+  <rect x="60" y="54" width="224" height="337" fill="#ffffff"/>
+  <rect x="70" y="64" width="204" height="317" fill="none" stroke="#d0d7de" stroke-dasharray="3 3"/>
+
+  <!-- header / footer in the band -->
+  <text x="284" y="46" text-anchor="end" font-size="9" fill="#8c96a8">notebook.ipynb</text>
+  <text x="284" y="407" text-anchor="end" font-size="9" fill="#8c96a8">3 / 12</text>
+  <text x="44" y="407" font-size="8" fill="#8c96a8">여백 48 px · 본문 여백 +30 px (light · dark)</text>
+
+  <!-- watermark / teacher mark slot -->
+  <rect x="238" y="70" width="36" height="26" rx="3" fill="#fbfcfe" stroke="#9aa6c2" stroke-dasharray="3 2"/>
+  <path d="M244 90 l8 -9 l6 6 l5 -4 l5 7 z" fill="#c7cdd8"/>
+  <circle cx="266" cy="78" r="2.5" fill="#f6bb42"/>
+
+  <!-- body -->
+  <rect x="78" y="74" width="110" height="10" rx="3" fill="#24292f"/>
+  <rect x="78" y="94" width="150" height="5" rx="2.5" fill="#c7cdd8"/>
+  <rect x="78" y="104" width="130" height="5" rx="2.5" fill="#c7cdd8"/>
+  <rect x="78" y="124" width="188" height="46" rx="5" fill="#1d222a"/>
+  <rect x="88" y="134" width="22" height="5" rx="2.5" fill="#c678dd"/>
+  <rect x="114" y="134" width="40" height="5" rx="2.5" fill="#c0c6d3"/>
+  <rect x="88" y="146" width="14" height="5" rx="2.5" fill="#c0c6d3"/>
+  <rect x="106" y="146" width="52" height="5" rx="2.5" fill="#98c379"/>
+  <rect x="88" y="158" width="60" height="5" rx="2.5" fill="#61afef"/>
+  <rect x="78" y="178" width="188" height="34" rx="3" fill="#f6f8fa"/>
+  <rect x="78" y="178" width="3" height="34" fill="#3f54b5"/>
+  <rect x="90" y="187" width="90" height="4" rx="2" fill="#9aa6c2"/>
+  <rect x="90" y="197" width="120" height="4" rx="2" fill="#9aa6c2"/>
+  <g stroke="#d0d7de" stroke-width="1">
+    <rect x="78" y="222" width="188" height="52" fill="#ffffff"/>
+    <rect x="78" y="222" width="188" height="13" fill="#eef1fb" stroke="none"/>
+    <line x1="78" y1="235" x2="266" y2="235"/>
+    <line x1="78" y1="248" x2="266" y2="248"/>
+    <line x1="78" y1="261" x2="266" y2="261"/>
+    <line x1="140" y1="222" x2="140" y2="274"/>
+    <line x1="203" y1="222" x2="203" y2="274"/>
+  </g>
+  <rect x="122" y="286" width="100" height="56" rx="3" fill="#e9edf5"/>
+  <path d="M132 334 l24 -24 l16 14 l12 -9 l18 19 z" fill="#b6bec9"/>
+  <circle cx="200" cy="300" r="5" fill="#f6bb42"/>
+  <line x1="36" y1="356" x2="308" y2="356" stroke="#e5322d" stroke-width="1.2" stroke-dasharray="5 4"/>
+  <rect x="78" y="364" width="140" height="5" rx="2.5" fill="#c7cdd8"/>
+  <rect x="78" y="374" width="100" height="5" rx="2.5" fill="#c7cdd8"/>
+
+  <!-- callouts -->
+  <g stroke="#b6bec9" stroke-width="1">
+    <line x1="286" y1="43" x2="348" y2="43"/>
+    <line x1="276" y1="83" x2="348" y2="83"/>
+    <line x1="268" y1="147" x2="348" y2="147"/>
+    <line x1="268" y1="236" x2="348" y2="236"/>
+    <line x1="310" y1="356" x2="348" y2="336"/>
+    <line x1="286" y1="404" x2="348" y2="404"/>
+  </g>
+  <g font-size="11.5" fill="#57606a">
+    <circle cx="348" cy="43" r="4" fill="#3f54b5"/>
+    <text x="360" y="47" font-size="13" font-weight="700" fill="#24292f">머릿말 · headerText</text>
+    <text x="360" y="64">기본 {file} · {date} 가능 · 정렬 headerAlign · 10 px 회색</text>
+
+    <circle cx="348" cy="83" r="4" fill="#f6bb42"/>
+    <text x="360" y="87" font-size="13" font-weight="700" fill="#24292f">워터마크 · 강사 마크</text>
+    <text x="360" y="104">watermarkImage (첫 페이지) · teacherMode (모든 페이지)</text>
+    <text x="360" y="120">우측 상단 · 폭 100 px · 강사 마크는 머릿말 대신 표시</text>
+
+    <circle cx="348" cy="147" r="4" fill="#1d222a"/>
+    <text x="360" y="151" font-size="13" font-weight="700" fill="#24292f">코드 셀 · codeTheme</text>
+    <text x="360" y="168">mdr-dark (기본) · 11종 · 줄 번호 showLineNumbers auto</text>
+    <text x="360" y="184">hideCodeCells · hideOutputs · excludeCellTags</text>
+
+    <circle cx="348" cy="236" r="4" fill="#6b86e0"/>
+    <text x="360" y="240" font-size="13" font-weight="700" fill="#24292f">페이지 테마 · pdfTheme</text>
+    <text x="360" y="257">light (기본) · dark · default (GitHub 문서 스타일)</text>
+    <text x="360" y="273">왼쪽 강조선 출력 박스 · 전체 폭 표 · 가운데 그림</text>
+    <text x="360" y="289">tableNowrap first · baseFontSize 16 px</text>
+
+    <circle cx="348" cy="336" r="4" fill="#e5322d"/>
+    <text x="360" y="340" font-size="13" font-weight="700" fill="#24292f">페이지 나누기</text>
+    <text x="360" y="357">글줄 · 표 행 · 그림 중간에서는 자르지 않음</text>
+    <text x="360" y="373">pageBreakBefore none (기본) · h1 · h1-h2 · breakBeforeTags</text>
+
+    <circle cx="348" cy="404" r="4" fill="#8c96a8"/>
+    <text x="360" y="408" font-size="13" font-weight="700" fill="#24292f">꼬릿말 · footerText</text>
+    <text x="360" y="425">기본 {page} / {total} · 여백 띠(pdfPageMargin 48 px) 안에 배치</text>
+  </g>
+</svg>

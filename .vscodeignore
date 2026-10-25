@@ -23,3 +23,5 @@ out/test/**
 *.pdf
 *.txt
 *.ipynb
+media/readme/**
+docs/**

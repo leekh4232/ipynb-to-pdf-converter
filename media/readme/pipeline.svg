@@ -1,0 +1,80 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="976" height="236" viewBox="0 0 976 236" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,'Apple SD Gothic Neo','Malgun Gothic','Noto Sans KR',sans-serif">
+  <!-- README hero: what happens between a right-click and the PDF on disk. -->
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M0 0 L10 5 L0 10 z" fill="#8c96a8"/>
+    </marker>
+    <linearGradient id="indigo" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#6b86e0"/>
+      <stop offset="1" stop-color="#3f54b5"/>
+    </linearGradient>
+  </defs>
+  <rect x="0.5" y="0.5" width="975" height="235" rx="14" fill="#ffffff" stroke="#d0d7de"/>
+
+  <!-- input: .md behind, .ipynb in front -->
+  <g transform="translate(40 54)">
+    <path d="M22 0 h30 l12 12 v50 a4 4 0 0 1 -4 4 h-38 a4 4 0 0 1 -4 -4 v-58 a4 4 0 0 1 4 -4 z" fill="#ffffff" stroke="#c7cdd8"/>
+    <path d="M52 0 v12 h12 z" fill="#e3e7ef"/>
+    <rect x="28" y="22" width="24" height="4" rx="2" fill="#c7cdd8"/>
+    <rect x="28" y="31" width="30" height="4" rx="2" fill="#c7cdd8"/>
+    <path d="M0 14 h30 l12 12 v50 a4 4 0 0 1 -4 4 h-38 a4 4 0 0 1 -4 -4 v-58 a4 4 0 0 1 4 -4 z" fill="#ffffff" stroke="#9aa6c2"/>
+    <path d="M30 14 v12 h12 z" fill="#d9e0f5"/>
+    <rect x="6" y="38" width="20" height="4" rx="2" fill="#2b2b2f"/>
+    <rect x="6" y="47" width="30" height="16" rx="3" fill="#1d222a"/>
+    <rect x="10" y="52" width="8" height="2.5" rx="1.25" fill="#c678dd"/>
+    <rect x="20" y="52" width="12" height="2.5" rx="1.25" fill="#c0c6d3"/>
+    <rect x="10" y="57" width="18" height="2.5" rx="1.25" fill="#98c379"/>
+    <rect x="6" y="68" width="30" height="4" rx="2" fill="#c7cdd8"/>
+  </g>
+  <text x="72" y="152" text-anchor="middle" font-size="12" font-weight="700" fill="#3f54b5">.ipynb · .md</text>
+  <line x1="110" y1="104" x2="134" y2="104" stroke="#8c96a8" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+  <!-- steps -->
+  <g font-size="12" fill="#57606a">
+    <rect x="136" y="48" width="158" height="112" rx="12" fill="#f6f8fa" stroke="#d0d7de"/>
+    <circle cx="158" cy="68" r="11" fill="url(#indigo)"/>
+    <text x="158" y="72" text-anchor="middle" font-size="11" font-weight="700" fill="#ffffff">1</text>
+    <text x="150" y="100" font-size="14" font-weight="700" fill="#24292f">HTML 생성</text>
+    <text x="150" y="122">marked · highlight.js</text>
+    <text x="150" y="140">마크다운 · 코드 · 출력 셀</text>
+
+    <line x1="296" y1="104" x2="322" y2="104" stroke="#8c96a8" stroke-width="1.5" marker-end="url(#arrow)"/>
+    <rect x="324" y="48" width="158" height="112" rx="12" fill="#f6f8fa" stroke="#d0d7de"/>
+    <circle cx="346" cy="68" r="11" fill="url(#indigo)"/>
+    <text x="346" y="72" text-anchor="middle" font-size="11" font-weight="700" fill="#ffffff">2</text>
+    <text x="338" y="100" font-size="14" font-weight="700" fill="#24292f">Webview 렌더링</text>
+    <text x="338" y="122">VS Code 내장 Chromium</text>
+    <text x="338" y="140">페이지 테마 · 코드 테마</text>
+
+    <line x1="484" y1="104" x2="510" y2="104" stroke="#8c96a8" stroke-width="1.5" marker-end="url(#arrow)"/>
+    <rect x="512" y="48" width="158" height="112" rx="12" fill="#f6f8fa" stroke="#d0d7de"/>
+    <circle cx="534" cy="68" r="11" fill="url(#indigo)"/>
+    <text x="534" y="72" text-anchor="middle" font-size="11" font-weight="700" fill="#ffffff">3</text>
+    <text x="526" y="100" font-size="14" font-weight="700" fill="#24292f">캡처 · 페이지 분할</text>
+    <text x="526" y="122">html2canvas</text>
+    <text x="526" y="140">줄 · 표 행 · 그림 안 자름</text>
+
+    <line x1="672" y1="104" x2="698" y2="104" stroke="#8c96a8" stroke-width="1.5" marker-end="url(#arrow)"/>
+    <rect x="700" y="48" width="158" height="112" rx="12" fill="#f6f8fa" stroke="#d0d7de"/>
+    <circle cx="722" cy="68" r="11" fill="url(#indigo)"/>
+    <text x="722" y="72" text-anchor="middle" font-size="11" font-weight="700" fill="#ffffff">4</text>
+    <text x="714" y="100" font-size="14" font-weight="700" fill="#24292f">PDF 조립</text>
+    <text x="714" y="122">jsPDF · 머릿말 · 꼬릿말</text>
+    <text x="714" y="140">비밀번호 (선택)</text>
+  </g>
+  <line x1="860" y1="104" x2="886" y2="104" stroke="#8c96a8" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+  <!-- output -->
+  <g transform="translate(892 62)">
+    <path d="M0 0 h34 l14 14 v60 a4 4 0 0 1 -4 4 h-44 a4 4 0 0 1 -4 -4 v-70 a4 4 0 0 1 4 -4 z" fill="#ffffff" stroke="#9aa6c2"/>
+    <path d="M34 0 v14 h14 z" fill="#d9e0f5"/>
+    <rect x="6" y="24" width="24" height="3.5" rx="1.75" fill="#c7cdd8"/>
+    <rect x="6" y="32" width="36" height="3.5" rx="1.75" fill="#c7cdd8"/>
+    <rect x="6" y="40" width="30" height="3.5" rx="1.75" fill="#c7cdd8"/>
+    <rect x="12" y="56" width="36" height="18" rx="5" fill="#e5322d"/>
+    <text x="30" y="69" text-anchor="middle" font-size="11" font-weight="700" fill="#ffffff" letter-spacing="0.8">PDF</text>
+  </g>
+  <text x="920" y="156" text-anchor="middle" font-size="12" font-weight="700" fill="#e5322d">A4 · 쪽번호</text>
+
+  <text x="488" y="204" text-anchor="middle" font-size="13" fill="#57606a">Python · nbconvert · Playwright · Chromium 설치 없음 · VS Code 안에서 렌더링부터 저장까지</text>
+</svg>

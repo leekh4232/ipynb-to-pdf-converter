@@ -1,35 +1,68 @@
+<div align="center">
+
+<img src="media/icon.png" width="112" alt="">
+
 # Ipynb PDF Converter
 
-VSCode 익스텐션으로 Jupyter Notebook (.ipynb) 및 Markdown (.md) 파일을 **PDF 문서**로 변환합니다.
+**Jupyter 노트북(.ipynb)과 마크다운(.md)을 우클릭 한 번으로 종이 규격 PDF로.**
 
-아이티윌에서 진행되는 이광호 강사의 수업에서 활용될 목적으로 개발되었습니다.
+Python도 Chromium도 설치하지 않습니다. VS Code 안에서 렌더링부터 저장까지 끝냅니다.
 
-## 기능
+[![Marketplace](https://vsmarketplacebadges.dev/version-short/leekh.ipynb-pdf-converter.svg?label=Marketplace&color=0066b8)](https://marketplace.visualstudio.com/items?itemName=leekh.ipynb-pdf-converter)
+[![Installs](https://vsmarketplacebadges.dev/installs-short/leekh.ipynb-pdf-converter.svg?color=0066b8)](https://marketplace.visualstudio.com/items?itemName=leekh.ipynb-pdf-converter)
+[![Release](https://img.shields.io/github/v/release/leekh4232/ipynb-to-pdf-converter?label=release&color=3f54b5)](https://github.com/leekh4232/ipynb-to-pdf-converter/releases)
+![VS Code ^1.84](https://img.shields.io/badge/VS%20Code-%5E1.84-007ACC)
+![Python · Chromium not needed](https://img.shields.io/badge/Python%20%C2%B7%20Chromium-not%20needed-2ea44f)
+[![Homepage](https://img.shields.io/badge/%EC%86%8C%EA%B0%9C%20%ED%8E%98%EC%9D%B4%EC%A7%80-github.io-24292f)](https://leekh4232.github.io/ipynb-to-pdf-converter/)
+[![License MIT](https://img.shields.io/badge/license-MIT-2ea44f)](LICENSE)
 
-- 파일 탐색기 · 에디터 탭 · 편집기 본문 우클릭 · 노트북 셀 우클릭 · 명령 팔레트에서 .ipynb·.md 파일을 PDF로 변환
-  - `Convert Notebook/Markdown to PDF` — 비밀번호 없이 변환 (환경설정에 기본 비밀번호가 있어도 적용하지 않음)
-  - `Convert Notebook/Markdown to PDF (with Password)` — 환경설정의 기본 비밀번호로 암호화. 기본값이 비어 있으면 팝업으로 입력받음
-  - `teacherMode`를 켜면 `(hossam)` / `(jussam)` 변환(각각 비밀번호 유무)이 추가되어 강사 마크를 우측 상단에 넣음
-- 일반 용지 규격으로 출력 (A3 · A4 · A5 · B4 · B5 · Letter · Legal · 16:9 와이드스크린, 세로/가로)
-- 페이지 나누기: 글줄·표의 행·그림 중간에서 잘리지 않고, 두 번째 h1부터는 새 페이지에서 시작 (`nb_convert.py`와 동일)
-- 머릿말·꼬릿말: 우측 상단에 파일명, 우측 하단에 `쪽 / 전체` 페이지 번호 (10 px 회색, 페이지 여백 띠 안에 배치)
-- 문서가 참조하는 이미지(상대·절대 경로, `file:`·`http(s)` URL, 노트북 셀 첨부 `attachment:`)를 PDF에 포함. 찾지 못한 이미지는 출력 채널에 경고로 표시
-- 페이지 테마 3종 (`nb_convert.py`의 `--theme`와 동일): `light`(기본값)·`dark`(Markdown Reader 팔레트), `default`(GitHub 문서 스타일)
-  - `light`·`dark`는 `nb_convert.py`의 세로(A4) 출력과 같은 레이아웃: 줄 번호 없는 코드 박스, 왼쪽 강조선이 있는 출력 박스, 전체 폭 표, 가운데 정렬 그림, ANSI 색상 출력
-- 코드 셀 신택스 하이라이트 테마 11종 — `mdr-dark`(기본값, `nb_convert.py --code-theme dark`)·`mdr-light`, Dracula, GitHub Light/Dark, Atom One Light/Dark, Monokai, Nord, VS Dark, Leekh
-  - `Leekh`는 페이지 테마가 `default`일 때 제목·표·출력까지 A4 인쇄 스타일로 함께 꾸며줍니다
-- **외부 런타임 의존성 없음** — Python, nbconvert, Playwright, 별도 Chromium 설치 불필요. VSCode 내장 Webview에서 직접 렌더링하고 캡처합니다.
+</div>
+
+<br>
+
+![우클릭부터 PDF 저장까지: HTML 생성, Webview 렌더링, 캡처와 페이지 분할, jsPDF 조립](media/readme/pipeline.png)
+
+> 아이티윌 이광호 강사의 수업용으로 만들었습니다. `nb_convert.py`와 같은 결과를 VS Code에서 냅니다.
+
+## 한눈에 보기
+
+| | |
+|:--|:--|
+| 🖱️ **우클릭 한 번** | 탐색기 · 에디터 탭 · 편집기 본문 · 노트북 셀 · 명령 팔레트 어디서든 |
+| 📐 **용지 규격** | A3 · A4 · A5 · B4 · B5 · Letter · Legal · 16:9 와이드 · 태블릿 7종(iPad · Galaxy Tab), 세로/가로 |
+| ✂️ **똑똑한 페이지 나누기** | 글줄 · 표 행 · 그림 중간에서는 자르지 않음 |
+| 🎨 **테마** | 페이지 테마 3종, 코드 하이라이트 11종 |
+| 🖼️ **이미지 그대로** | 상대·절대 경로, `file:` · `http(s)` URL, 셀 첨부(`attachment:`) 모두 PDF에 포함. 못 찾은 이미지는 경고 |
+| 🔒 **비밀번호** | 열람 비밀번호와 권한(인쇄 · 복사 · 수정 · 주석) |
+| 📦 **의존성 0** | Python · nbconvert · Playwright · Chromium 설치 불필요 |
+| 🌐 **한국어 UI** | VS Code 표시 언어가 한국어면 한글, 그 외에는 영어 |
+
+## 설치
+
+Marketplace에서 **Ipynb PDF Converter**를 검색하거나, 명령 팔레트(`Ctrl/Cmd+P`)에서:
+
+```
+ext install leekh.ipynb-pdf-converter
+```
 
 ## 사용 방법
 
-1. VSCode에서 .ipynb 또는 .md 파일(탐색기·탭·편집기 본문·노트북 셀)을 마우스 우클릭
-2. `Convert Notebook/Markdown to PDF` 또는 `Convert Notebook/Markdown to PDF (with Password)` 선택
-3. 같은 디렉토리에 `.pdf` 파일이 생성됨. 같은 이름이 이미 있으면 `이름 (1).pdf`, `이름 (2).pdf`처럼 번호를 붙여 덮어쓰지 않음
-4. 변환 중에는 VSCode 알림 영역에 진행률(렌더링 → 페이지 캡처 → PDF 조립 → 저장)이 표시되며 취소할 수 있음. 출력 창은 자동으로 열리지 않고, 오류나 이미지 누락 경고 알림의 "Show Log" 버튼으로 열 수 있음
+1. `.ipynb` 또는 `.md` 파일을 **우클릭**합니다.
+2. 명령을 고릅니다.
 
-## 환경설정
+   | 한국어 UI | English UI | 하는 일 |
+   |:--|:--|:--|
+   | 노트북/마크다운을 PDF로 변환 | Convert Notebook/Markdown to PDF | 비밀번호 없이 변환. 설정에 기본 비밀번호가 있어도 쓰지 않음 |
+   | … (비밀번호) | … (with Password) | 설정의 기본 비밀번호로 암호화. 비어 있으면 팝업으로 입력 |
+   | … (hossam) · … (jussam) | 같음 | `teacherMode`를 켜면 추가. 강사 마크를 모든 페이지 우측 상단에 넣음(비밀번호 유무 각각) |
 
-VSCode 설정 UI에서 "Ipynb PDF Converter" 섹션을 열면 아래 순서(중요도순)로 나옵니다. 설정 설명과 명령 이름은 VSCode 표시 언어가 한국어면 한글로, 그 외에는 영어로 보입니다. `settings.json` 예시:
+3. 같은 폴더에 `.pdf`가 생깁니다. 같은 이름이 있으면 `이름 (1).pdf`, `이름 (2).pdf`처럼 번호를 붙이고 덮어쓰지 않습니다.
+
+변환 중에는 알림 영역에 진행률(렌더링 → 페이지 캡처 → PDF 조립 → 저장)이 보이고 취소할 수 있습니다. 출력 창은 자동으로 열리지 않으며, 오류나 이미지 누락 알림의 **Show Log** 버튼으로 엽니다.
+
+## 설정
+
+설정 UI에서 **Ipynb PDF Converter** 섹션을 열면 중요도순으로 나옵니다. 자주 쓰는 값만 `settings.json`에 적으면:
 
 ```json
 {
@@ -44,71 +77,122 @@ VSCode 설정 UI에서 "Ipynb PDF Converter" 섹션을 열면 아래 순서(중�
 }
 ```
 
-**모양**
-- **pdfTheme**: 페이지 테마 (기본값 `light`). `light`/`dark`는 Markdown Reader 팔레트(`nb_convert.py --theme`와 동일, `dark`는 여백까지 어두움), `default`는 GitHub 문서 스타일. 코드 셀은 항상 `codeTheme`을 따름
-- **codeTheme**: 코드 셀 하이라이트 테마 (기본값 `mdr-dark` = `nb_convert.py --code-theme dark`). `mdr-light`, Dracula, GitHub, Atom One, Monokai, Nord, VS Dark, Leekh(`default` 테마에서 제목·표까지 꾸밈)
+![출력 페이지의 각 부분과 그것을 정하는 설정](media/readme/page-anatomy.png)
 
-**용지**
-- **pdfPageSize**: `A3` · `A4`(기본값) · `A5` · `B4`(JIS 257×364 mm) · `B5`(JIS 182×257 mm) · `Letter` · `Legal` · `Widescreen`(16:9 슬라이드, 가로 방향과 함께)
-- **pdfPageOrientation**: `portrait`(기본값) · `landscape`
-- **pdfPageMargin**: 페이지 여백 (CSS px, 기본값 `48` = 0.5 in). `light`/`dark`는 그 안쪽에 본문 여백 30 px를 더함(좌우는 모든 페이지, 위아래는 문서 처음·끝)
+![페이지 테마 light, dark, default 비교](media/readme/themes.png)
 
-**출력 파일**
-- **outputDirectory**: 저장 폴더. 비우면 원본 옆, 상대 경로(`pdf`)는 원본 폴더 기준, 절대 경로 가능. 없으면 만듦
-- **outputFileName**: 파일명 (기본값 `{name}`). `{name}` 원본 이름, `{date}` 날짜(YYYY-MM-DD)
-- **openAfterConvert**: 변환 후 시스템 뷰어로 열기 (기본값 `false`)
+전체 설정은 아래를 펼쳐 보세요. 설정 이름 앞에는 모두 `ipynb-pdf-converter.`가 붙습니다.
 
-**머릿말·꼬릿말** (페이지 여백 띠 안, 회색)
-- **headerText** (기본값 `{file}`) · **footerText** (기본값 `{page} / {total}`): `{file}` `{date}` `{page}` `{total}` 사용 가능, 비우면 표시 안 함
-- **headerAlign** · **footerAlign**: `left` · `center` · `right`(기본값)
-- **headerFooterFontSize**: 글자 크기 (CSS px, 기본값 `10`)
+<details>
+<summary><b>모양 · 용지</b></summary>
 
-**페이지 나누기**
-- **pageBreakBefore**: `h1`(기본값, `nb_convert.py` 규칙) · `h1-h2` · `none`. 문서 맨 위의 제목은 빈 페이지를 만들지 않음. 글줄·표 행·그림은 어떤 설정에서도 잘리지 않음
-- **breakBeforeTags**: 이 태그가 달린 셀부터 새 페이지 (예 `["pagebreak"]`)
+| 설정 | 기본값 | 설명 |
+|:--|:--|:--|
+| `pdfTheme` | `light` | `light` · `dark`는 Markdown Reader 팔레트(`nb_convert.py --theme`와 동일, `dark`는 여백까지 어두움). `default`는 GitHub 문서 스타일. 코드 셀은 항상 `codeTheme`을 따름 |
+| `codeTheme` | `mdr-dark` | `nb_convert.py --code-theme dark`와 동일. `mdr-light` · `dracula` · `github` · `github-dark` · `atom-one-light` · `atom-one-dark` · `monokai` · `nord` · `vs2015` · `leekh`(`default` 테마에서 제목·표·출력까지 A4 인쇄 스타일로) |
+| `pdfPageSize` | `A4` | `A3` · `A5` · `B4`(JIS 257×364 mm) · `B5`(JIS 182×257 mm) · `Letter` · `Legal` · `Widescreen`(16:9 슬라이드, 가로 방향과 함께) · 태블릿 `iPadPro13` · `iPadPro11` · `iPadAir13` · `iPad11`(iPad/iPad Air 11") · `iPadMini` · `GalaxyTabS11`(11") · `GalaxyTabS11Ultra`(S11 Ultra/S12 Ultra). 태블릿은 화면의 논리 크기(CSS px, 예: Galaxy Tab S11 = 800×1280)라 100%에서 화면에 꽉 참 |
+| `pdfPageOrientation` | `portrait` | `landscape` |
+| `pdfPageMargin` | `48` | 페이지 여백(CSS px, 48 = 0.5 in). `light` · `dark`는 그 안쪽에 본문 여백 30 px를 더함(좌우는 모든 페이지, 위아래는 문서 처음·끝) |
 
-**내용 선택** (노트북)
-- **hideCodeCells**: 코드 셀 소스 숨김(출력은 유지) · **hideOutputs**: 모든 출력 숨김
-- **excludeCellTags**: 이 태그가 달린 셀은 통째로 제외 (예 `["hide", "answer"]`) — 학생 배포본에서 정답 셀 빼기
+</details>
 
-**표·코드 모양**
-- **tableNowrap**: `first`(기본값, 첫 열만 한 줄 = `nb_convert.py`) · `all`(모든 셀 한 줄, 넓은 표는 넘칠 수 있음) · `none`
-- **showLineNumbers**: `auto`(기본값: `default` 테마만 표시) · `on` · `off`
+<details>
+<summary><b>출력 파일</b></summary>
 
-**글꼴**
-- **baseFontSize**: 루트 글자 크기 (CSS px, 기본값 `16`). 문서의 모든 크기가 이 값에 비례
-- **bodyFontFamily** · **codeFontFamily**: CSS font-family 문자열. 비우면 테마 기본(본문 Helvetica Neue + Noto Sans CJK KR, 코드 Menlo)
+| 설정 | 기본값 | 설명 |
+|:--|:--|:--|
+| `outputDirectory` | 비움 | 비우면 원본 옆. 상대 경로(`pdf`)는 원본 폴더 기준, 절대 경로 가능. 없으면 만듦 |
+| `outputFileName` | `{name}` | `{name}` 원본 이름, `{date}` 날짜(YYYY-MM-DD) |
+| `openAfterConvert` | `false` | 변환 후 시스템 뷰어로 열기 |
 
-**이미지 품질·파일 크기**
-- **imageFormat**: `png`(기본값, 무손실) · `jpeg`(보통 1/4 이하 크기) · **jpegQuality**: 10-100 (기본값 `85`)
-- **deviceScaleFactor**: 렌더링 배율 1-5 (기본값 `3`)
+</details>
 
-**보안** (`(with Password)` 명령에서만)
-- **pdfPassword**: 기본 비밀번호. 비우면 실행 때마다 팝업. settings.json에 평문 저장되며 암호화는 40-bit RC4(jsPDF)로 가벼운 열람 제한용
-- **pdfPermissions**: 열람자에게 허용할 작업 `print` · `copy` · `modify` · `annot-forms` (기본값 `["annot-forms"]` = `nb_convert.py`와 동일)
-- **ownerPassword**: 소유자 비밀번호. 비우면 파일마다 무작위라 나중에 본인도 제한을 풀 수 없음
+<details>
+<summary><b>머릿말 · 꼬릿말</b> (페이지 여백 띠 안, 회색)</summary>
 
-**표지·워터마크**
-- **coverPage** (기본값 `false`) · **coverTitle** (`{file}`) · **coverSubtitle** · **coverAuthor**: 한 페이지 표지. `{file}` `{date}` 사용 가능
-- **watermarkImage**: 첫 페이지 우측 상단에 고정할 이미지(원본 기준 상대 경로·절대 경로·URL, `nb_convert.py --ssam`에 해당) · **watermarkWidth**: 폭 (CSS px, 기본값 `100`)
+| 설정 | 기본값 | 설명 |
+|:--|:--|:--|
+| `headerText` | `{file}` | `{file}` `{date}` `{page}` `{total}` 사용 가능. 비우면 표시 안 함 |
+| `footerText` | `{page} / {total}` | 위와 같음 |
+| `headerAlign` · `footerAlign` | `right` | `left` · `center` · `right` |
+| `headerFooterFontSize` | `10` | 글자 크기(CSS px) |
 
-**고급**
-- **allowRemoteImages**: 문서가 참조하는 http(s) 이미지 내려받기 (기본값 `true`)
-- **renderTimeoutSeconds**: 웹뷰 렌더링 제한 시간 (기본값 `60`, 긴 노트북이면 올리기)
-- **teacherMode** (기본값 `false`): 켜면 우클릭 메뉴·명령 팔레트에 `(hossam)` · `(hossam, with Password)` · `(jussam)` · `(jussam, with Password)` 변환 명령이 추가됨. 이 모드는 `nb_convert.py --ssam`처럼 강사 마크(`https://data.hossam.kr/itwill-ho.png` / `itwill-ju.png`, 폭 100 px)를 모든 페이지 우측 상단 여백에 그리며, 이때 `headerText`는 표시하지 않음(꼬릿말은 유지)
+</details>
 
-## 동작 원리
+<details>
+<summary><b>페이지 나누기 · 내용 선택</b> (노트북)</summary>
 
-1. .ipynb 파일은 JSON으로 파싱, .md 파일은 본문 전체를 마크다운으로 처리
-2. 마크다운은 `marked`, 코드 셀은 `highlight.js`로 HTML 생성
-3. VSCode Webview (내장 Chromium)에 HTML 렌더링
-4. `html2canvas`로 DOM을 캔버스에 그린 뒤, 글줄·표 행·그림을 가르지 않는 위치에서 페이지 단위로 분할
-5. `jspdf`로 PDF를 조립(선택 시 비밀번호 암호화)하여 디스크에 저장
+| 설정 | 기본값 | 설명 |
+|:--|:--|:--|
+| `pageBreakBefore` | `none` | 제목 앞에서 나누지 않음. `h1`(`nb_convert.py` 규칙) · `h1-h2`. 문서 맨 위의 제목은 빈 페이지를 만들지 않음. 글줄·표 행·그림은 어떤 설정에서도 잘리지 않음 |
+| `breakBeforeTags` | `[]` | 이 태그가 달린 셀부터 새 페이지(예 `["pagebreak"]`) |
+| `hideCodeCells` | `false` | 코드 셀 소스 숨김(출력은 유지) |
+| `hideOutputs` | `false` | 모든 출력 숨김 |
+| `excludeCellTags` | `[]` | 이 태그가 달린 셀은 통째로 제외(예 `["hide", "answer"]`). 학생 배포본에서 정답 셀 빼기 |
 
-## 개발자
+</details>
 
-- **이광호** (leekh4232@gmail.com)
+<details>
+<summary><b>표 · 코드 · 글꼴</b></summary>
 
-## 라이선스
+| 설정 | 기본값 | 설명 |
+|:--|:--|:--|
+| `tableNowrap` | `first` | 첫 열만 한 줄(`nb_convert.py`와 동일). `all`은 모든 셀 한 줄(넓은 표는 넘칠 수 있음). `none` |
+| `showLineNumbers` | `auto` | `default` 테마에서만 표시. `on` · `off` |
+| `baseFontSize` | `16` | 루트 글자 크기(CSS px). 문서의 모든 크기가 이 값에 비례 |
+| `bodyFontFamily` · `codeFontFamily` | 비움 | CSS font-family 문자열. 비우면 테마 기본(본문 Helvetica Neue + Noto Sans CJK KR, 코드 Menlo) |
 
-MIT
+</details>
+
+<details>
+<summary><b>이미지 품질 · 파일 크기</b></summary>
+
+| 설정 | 기본값 | 설명 |
+|:--|:--|:--|
+| `imageFormat` | `png` | 무손실. `jpeg`는 보통 1/4 이하 크기 |
+| `jpegQuality` | `85` | 10-100 |
+| `deviceScaleFactor` | `3` | 렌더링 배율 1-5 |
+
+</details>
+
+<details>
+<summary><b>보안</b> (<code>(비밀번호)</code> 명령에서만)</summary>
+
+| 설정 | 기본값 | 설명 |
+|:--|:--|:--|
+| `pdfPassword` | 비움 | 비우면 실행 때마다 팝업. `settings.json`에 평문으로 저장되며, 암호화는 40-bit RC4(jsPDF)로 가벼운 열람 제한용 |
+| `pdfPermissions` | `["annot-forms"]` | 열람자에게 허용할 작업 `print` · `copy` · `modify` · `annot-forms`(`nb_convert.py`와 동일) |
+| `ownerPassword` | 비움 | 비우면 파일마다 무작위라 나중에 본인도 제한을 풀 수 없음 |
+
+</details>
+
+<details>
+<summary><b>표지 · 워터마크</b></summary>
+
+| 설정 | 기본값 | 설명 |
+|:--|:--|:--|
+| `coverPage` | `false` | 한 페이지 표지 |
+| `coverTitle` · `coverSubtitle` · `coverAuthor` | `{file}` · 비움 · 비움 | `{file}` `{date}` 사용 가능 |
+| `watermarkImage` | 비움 | 첫 페이지 우측 상단에 고정할 이미지(원본 기준 상대 경로 · 절대 경로 · URL, `nb_convert.py --ssam`에 해당) |
+| `watermarkWidth` | `100` | 폭(CSS px) |
+
+</details>
+
+<details>
+<summary><b>고급 · teacher mode</b></summary>
+
+| 설정 | 기본값 | 설명 |
+|:--|:--|:--|
+| `allowRemoteImages` | `true` | 문서가 참조하는 http(s) 이미지 내려받기 |
+| `renderTimeoutSeconds` | `60` | 웹뷰 렌더링 제한 시간. 긴 노트북이면 올리기 |
+| `teacherMode` | `false` | 우클릭 메뉴·명령 팔레트에 `(hossam)` · `(hossam, 비밀번호)` · `(jussam)` · `(jussam, 비밀번호)` 변환 명령 추가. `nb_convert.py --ssam`처럼 강사 마크(`https://data.hossam.kr/itwill-ho.png` / `itwill-ju.png`, 폭 100 px)를 모든 페이지 우측 상단 여백에 그리며, 이때 `headerText`는 표시하지 않음(꼬릿말은 유지) |
+
+</details>
+
+## 다른 확장에서 쓰기
+
+`activate`가 내보내는 `convertToPdfBytes` API를 부르면 같은 파이프라인으로 PDF 바이트를 돌려받습니다. 파일은 만들지 않습니다. **PDF2Note**가 이 API로 `.ipynb` · `.md`에 필기 영역을 붙입니다.
+
+## 개발자 · 라이선스
+
+**이광호** (leekh4232@gmail.com) · [MIT](LICENSE)

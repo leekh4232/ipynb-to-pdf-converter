@@ -1,0 +1,98 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="720" height="236" viewBox="0 0 720 236" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,'Apple SD Gothic Neo','Malgun Gothic','Noto Sans KR',sans-serif">
+  <!-- README: the three page themes side by side. -->
+  <rect x="0.5" y="0.5" width="719" height="235" rx="14" fill="#ffffff" stroke="#d0d7de"/>
+  <text x="20" y="22" font-size="12" font-weight="700" fill="#8c96a8">pdfTheme</text>
+
+  <!-- light -->
+  <g transform="translate(67 30)">
+    <rect x="0" y="0" width="106" height="150" rx="3" fill="#ffffff" stroke="#b6bec9"/>
+    <rect x="12" y="14" width="44" height="6" rx="2" fill="#24292f"/>
+    <rect x="12" y="26" width="70" height="3" rx="1.5" fill="#c7cdd8"/>
+    <rect x="12" y="33" width="58" height="3" rx="1.5" fill="#c7cdd8"/>
+    <rect x="12" y="44" width="82" height="28" rx="3" fill="#1d222a"/>
+    <rect x="18" y="50" width="12" height="3" rx="1.5" fill="#c678dd"/>
+    <rect x="33" y="50" width="22" height="3" rx="1.5" fill="#c0c6d3"/>
+    <rect x="18" y="58" width="8" height="3" rx="1.5" fill="#c0c6d3"/>
+    <rect x="29" y="58" width="30" height="3" rx="1.5" fill="#98c379"/>
+    <rect x="18" y="66" width="36" height="3" rx="1.5" fill="#61afef"/>
+    <rect x="12" y="78" width="82" height="18" fill="#f6f8fa"/>
+    <rect x="12" y="78" width="2" height="18" fill="#3f54b5"/>
+    <rect x="19" y="83" width="40" height="2.5" rx="1" fill="#9aa6c2"/>
+    <rect x="19" y="89" width="56" height="2.5" rx="1" fill="#9aa6c2"/>
+    <g stroke="#d0d7de" stroke-width="0.8">
+      <rect x="12" y="104" width="82" height="30" fill="#ffffff"/>
+      <rect x="12" y="104" width="82" height="8" fill="#eef1fb" stroke="none"/>
+      <line x1="12" y1="112" x2="94" y2="112"/>
+      <line x1="12" y1="120" x2="94" y2="120"/>
+      <line x1="12" y1="127" x2="94" y2="127"/>
+      <line x1="40" y1="104" x2="40" y2="134"/>
+      <line x1="67" y1="104" x2="67" y2="134"/>
+    </g>
+    <text x="102" y="146" text-anchor="end" font-size="5" fill="#8c96a8">1 / 3</text>
+  </g>
+  <text x="120" y="204" text-anchor="middle" font-size="14" font-weight="700" fill="#24292f">light <tspan font-size="11" font-weight="400" fill="#3f54b5">기본값</tspan></text>
+  <text x="120" y="222" text-anchor="middle" font-size="11.5" fill="#57606a">Markdown Reader 팔레트</text>
+
+  <!-- dark -->
+  <g transform="translate(307 30)">
+    <rect x="0" y="0" width="106" height="150" rx="3" fill="#1e2227" stroke="#3a4049"/>
+    <rect x="12" y="14" width="44" height="6" rx="2" fill="#e6e8eb"/>
+    <rect x="12" y="26" width="70" height="3" rx="1.5" fill="#5c6570"/>
+    <rect x="12" y="33" width="58" height="3" rx="1.5" fill="#5c6570"/>
+    <rect x="12" y="44" width="82" height="28" rx="3" fill="#13161a"/>
+    <rect x="18" y="50" width="12" height="3" rx="1.5" fill="#c678dd"/>
+    <rect x="33" y="50" width="22" height="3" rx="1.5" fill="#c0c6d3"/>
+    <rect x="18" y="58" width="8" height="3" rx="1.5" fill="#c0c6d3"/>
+    <rect x="29" y="58" width="30" height="3" rx="1.5" fill="#98c379"/>
+    <rect x="18" y="66" width="36" height="3" rx="1.5" fill="#61afef"/>
+    <rect x="12" y="78" width="82" height="18" fill="#262b32"/>
+    <rect x="12" y="78" width="2" height="18" fill="#6b86e0"/>
+    <rect x="19" y="83" width="40" height="2.5" rx="1" fill="#7d8694"/>
+    <rect x="19" y="89" width="56" height="2.5" rx="1" fill="#7d8694"/>
+    <g stroke="#3a4049" stroke-width="0.8">
+      <rect x="12" y="104" width="82" height="30" fill="#1e2227"/>
+      <rect x="12" y="104" width="82" height="8" fill="#2b3240" stroke="none"/>
+      <line x1="12" y1="112" x2="94" y2="112"/>
+      <line x1="12" y1="120" x2="94" y2="120"/>
+      <line x1="12" y1="127" x2="94" y2="127"/>
+      <line x1="40" y1="104" x2="40" y2="134"/>
+      <line x1="67" y1="104" x2="67" y2="134"/>
+    </g>
+    <text x="102" y="146" text-anchor="end" font-size="5" fill="#7d8694">1 / 3</text>
+  </g>
+  <text x="360" y="204" text-anchor="middle" font-size="14" font-weight="700" fill="#24292f">dark</text>
+  <text x="360" y="222" text-anchor="middle" font-size="11.5" fill="#57606a">같은 레이아웃 · 여백까지 어두움</text>
+
+  <!-- default -->
+  <g transform="translate(547 30)">
+    <rect x="0" y="0" width="106" height="150" rx="3" fill="#ffffff" stroke="#b6bec9"/>
+    <rect x="12" y="14" width="44" height="6" rx="2" fill="#24292f"/>
+    <line x1="12" y1="23" x2="94" y2="23" stroke="#d0d7de" stroke-width="0.8"/>
+    <rect x="12" y="28" width="70" height="3" rx="1.5" fill="#c7cdd8"/>
+    <rect x="12" y="35" width="58" height="3" rx="1.5" fill="#c7cdd8"/>
+    <rect x="12" y="44" width="82" height="28" rx="3" fill="#f6f8fa" stroke="#d0d7de" stroke-width="0.8"/>
+    <g font-size="4" fill="#9aa6c2" font-family="Menlo,Consolas,monospace">
+      <text x="16" y="53">1</text><text x="16" y="61">2</text><text x="16" y="69">3</text>
+    </g>
+    <rect x="24" y="50" width="12" height="3" rx="1.5" fill="#a626a4"/>
+    <rect x="39" y="50" width="22" height="3" rx="1.5" fill="#383a42"/>
+    <rect x="24" y="58" width="8" height="3" rx="1.5" fill="#383a42"/>
+    <rect x="35" y="58" width="30" height="3" rx="1.5" fill="#50a14f"/>
+    <rect x="24" y="66" width="36" height="3" rx="1.5" fill="#4078f2"/>
+    <rect x="12" y="78" width="82" height="18" fill="#ffffff"/>
+    <rect x="19" y="83" width="40" height="2.5" rx="1" fill="#9aa6c2"/>
+    <rect x="19" y="89" width="56" height="2.5" rx="1" fill="#9aa6c2"/>
+    <g stroke="#d0d7de" stroke-width="0.8">
+      <rect x="12" y="104" width="64" height="30" fill="#ffffff"/>
+      <rect x="12" y="104" width="64" height="8" fill="#f6f8fa" stroke="none"/>
+      <line x1="12" y1="112" x2="76" y2="112"/>
+      <line x1="12" y1="120" x2="76" y2="120"/>
+      <line x1="12" y1="127" x2="76" y2="127"/>
+      <line x1="34" y1="104" x2="34" y2="134"/>
+      <line x1="55" y1="104" x2="55" y2="134"/>
+    </g>
+    <text x="102" y="146" text-anchor="end" font-size="5" fill="#8c96a8">1 / 3</text>
+  </g>
+  <text x="600" y="204" text-anchor="middle" font-size="14" font-weight="700" fill="#24292f">default</text>
+  <text x="600" y="222" text-anchor="middle" font-size="11.5" fill="#57606a">GitHub 문서 스타일 · 코드 줄 번호</text>
+</svg>
