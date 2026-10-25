@@ -61,8 +61,66 @@ function hasAnyTag(cell: Cell, tags: string[] | undefined): boolean {
 // Renders a standalone Markdown document, reusing the same notebook chrome so it
 // flows through the identical capture/theme pipeline as a .ipynb file.
 export function renderMarkdown(source: string): string {
-  const cell = markdownCellHtml(marked.parse(source) as string);
+  const cell = markdownCellHtml(marked.parse(stripFrontMatter(source)) as string);
   return `<div class="jp-Notebook">\n${cell}\n</div>`;
+}
+
+const FENCE = /^ {0,3}(`{3,}|~{3,})/;
+const YAML_KEY = /^[A-Za-z_$][\w$.-]*[ \t]*:(?:[ \t]|$)/;
+const YAML_MORE = /^(?:[ \t]+\S|#)/;
+
+// YAML front matter is metadata, not content, so it is dropped instead of
+// rendering as a rule plus a paragraph: the block at the top of the file
+// (Slidev, Jekyll, ...) and Slidev's per-slide blocks such as
+// "---\nlayout: two-cols\n---". A per-slide block must hold only `key: value`
+// lines (plus indented or # lines) so ordinary rules around text survive;
+// blocks inside fenced code are left alone so syntax examples still print.
+function stripFrontMatter(source: string): string {
+  const lines = source.replace(/^\uFEFF/, '').split(/\r?\n/);
+  const out: string[] = [];
+  let fence = '';
+  for (let i = 0; i < lines.length; i++) {
+    const line = lines[i];
+    const fenceMatch = FENCE.exec(line);
+    if (fence) {
+      if (fenceMatch && fenceMatch[1][0] === fence[0] && fenceMatch[1].length >= fence.length) {
+        fence = '';
+      }
+      out.push(line);
+      continue;
+    }
+    if (fenceMatch) {
+      fence = fenceMatch[1];
+      out.push(line);
+      continue;
+    }
+    const end = /^---[ \t]*$/.test(line) ? frontMatterEnd(lines, i, i === 0) : -1;
+    if (end < 0) {
+      out.push(line);
+      continue;
+    }
+    out.push('');
+    i = end;
+  }
+  return out.join('\n');
+}
+
+// Index of the closing "---" of a front matter block opened at `start`, or -1.
+// The head block may hold anything YAML allows; later blocks are checked.
+function frontMatterEnd(lines: string[], start: number, atHead: boolean): number {
+  for (let j = start + 1; j < lines.length; j++) {
+    const line = lines[j];
+    if (/^(?:---|\.\.\.)[ \t]*$/.test(line)) {
+      return atHead || j > start + 1 ? j : -1;
+    }
+    if (atHead) {
+      continue;
+    }
+    if (j === start + 1 ? !YAML_KEY.test(line) : !(YAML_KEY.test(line) || YAML_MORE.test(line))) {
+      return -1;
+    }
+  }
+  return -1;
 }
 
 function markdownCellHtml(html: string, cls = ''): string {

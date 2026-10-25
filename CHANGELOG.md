@@ -4,6 +4,11 @@
 
 형식은 [Keep a Changelog](https://keepachangelog.com/ko/1.1.0/)를, 버전은 [유의적 버전](https://semver.org/lang/ko/)을 따릅니다.
 
+## [0.10.1] - 2026-10-26
+
+### 변경
+- **`.md`의 머리글(YAML front matter)을 PDF에서 뺍니다.** 맨 위의 `theme` · `title` · `layout` 블록과 Slidev 슬라이드 중간의 `---` / `layout: two-cols` / `---` 같은 블록이 더 이상 가로줄과 문단으로 찍히지 않습니다. 코드 블록 안의 예시와 내용 사이의 일반 `---` 구분선은 그대로 남습니다. PDF2Note로 `.md`에 필기 영역을 붙일 때도 같습니다.
+
 ## [0.10.0] - 2026-10-26
 
 ### 추가
