@@ -1,7 +1,6 @@
 import * as vscode from 'vscode';
 import * as path from 'path';
 import { promises as fs } from 'fs';
-import { randomBytes } from 'crypto';
 import { jsPDF } from 'jspdf';
 import { renderNotebook, renderMarkdown } from './render';
 import { Notebook } from './notebook';
@@ -1045,13 +1044,13 @@ export async function generatePdfFromPages(
     hotfixes: ['px_scaling'],
     compress: true,
     // jsPDF only offers 40-bit RC4. Default permissions mirror
-    // secure_pdf_with_pikepdf in nb_convert.py (annotations/forms only). The
-    // owner password is random unless the user sets one, so the limits hold
-    // for anyone who only has the user password.
+    // secure_pdf_with_pikepdf in nb_convert.py (annotations/forms only). An
+    // empty ownerPassword falls back to the user password, so the author can
+    // always lift the limits; anyone with that password gets owner rights too.
     encryption: options.password
       ? {
           userPassword: options.password,
-          ownerPassword: options.ownerPassword || randomBytes(16).toString('hex'),
+          ownerPassword: options.ownerPassword || options.password,
           userPermissions: options.permissions ?? ['annot-forms'],
         }
       : undefined,

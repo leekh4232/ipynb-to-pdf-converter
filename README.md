@@ -162,7 +162,7 @@ ext install leekh.ipynb-pdf-converter
 |:--|:--|:--|
 | `pdfPassword` | 비움 | 비우면 실행 때마다 팝업. `settings.json`에 평문으로 저장되며, 암호화는 40-bit RC4(jsPDF)로 가벼운 열람 제한용 |
 | `pdfPermissions` | `["annot-forms"]` | 열람자에게 허용할 작업 `print` · `copy` · `modify` · `annot-forms`(`nb_convert.py`와 동일) |
-| `ownerPassword` | 비움 | 비우면 파일마다 무작위라 나중에 본인도 제한을 풀 수 없음 |
+| `ownerPassword` | 비움 | 비우면 PDF 비밀번호(`pdfPassword` 또는 팝업 입력값)와 같음. 이때는 그 비밀번호를 아는 사람에게 `pdfPermissions` 제한이 적용되지 않음 |
 
 </details>
 
