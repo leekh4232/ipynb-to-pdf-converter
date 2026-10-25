@@ -101,7 +101,7 @@ export function resolveTheme(name: string | undefined): { key: string; info: The
 // Page (document) themes, mirroring nb_convert.py's --theme. 'default' is the
 // GitHub look (github-markdown.css + styles.css); 'light'/'dark' are the Markdown
 // Reader palettes in media/page-themes/mdr.css. `background` repeats that
-// palette's --bg-base so html2canvas and jsPDF can paint the paper color.
+// palette's --bg-base so html2canvas and the PDF assembly can paint the paper color.
 export interface PageThemeInfo {
   label: string;
   background: string;

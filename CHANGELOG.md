@@ -1,179 +1,184 @@
-# Changelog
+# 변경 이력
 
-All notable changes to this project will be documented in this file.
+이 프로젝트의 주요 변경 사항을 기록합니다.
 
-The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
-and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+형식은 [Keep a Changelog](https://keepachangelog.com/ko/1.1.0/)를, 버전은 [유의적 버전](https://semver.org/lang/ko/)을 따릅니다.
+
+## [미배포]
+
+### 추가
+- **PDF 텍스트 선택 · 복사 · 검색**: 페이지 그림 위에 보이지 않는 텍스트 층을 겹쳐, 생성된 PDF에서 글자를 드래그해 복사하고 PDF 뷰어에서 검색할 수 있습니다. 코드 셀의 들여쓰기와 머릿말 · 꼬릿말 글자도 포함됩니다. 한글은 내장 NanumGothic 글꼴에서 쓰인 글자만 넣어 PDF 크기가 거의 늘지 않습니다. 이 PDF를 받아 쓰는 PDF2Note 결과에도 텍스트가 그대로 남습니다.
+
+### 변경
+- **PDF 조립을 pdf-lib로 바꿨습니다.** 비밀번호를 걸면 PDF가 **AES-256**으로 암호화됩니다.
 
 ## [0.9.3] - 2026-10-26
 
-### Changed
-- README links to the intro site under the badges.
+### 변경
+- README 배지 아래에 소개 페이지 링크를 넣었습니다.
 
 ## [0.9.2] - 2026-10-26
 
-### Changed
-- Homepage moved to the intro site https://ipynb-to-pdf.hossam.kr/.
+### 변경
+- 홈페이지 주소를 소개 페이지 https://ipynb-to-pdf.hossam.kr/ 로 옮겼습니다.
 
 ## [0.9.1] - 2026-10-26
 
-### Changed
-- **Empty `ownerPassword` now uses the PDF password** (the `pdfPassword` setting or the one typed in the prompt) instead of a random one, so the author can always lift the limits. Anyone who knows that password gets owner rights too.
+### 변경
+- **`ownerPassword`가 비어 있으면 PDF 비밀번호를 그대로 씁니다** (`pdfPassword` 설정값 또는 팝업에 입력한 값). 전에는 무작위 값이었습니다. 이제 작성자가 언제든 권한 제한을 풀 수 있고, 그 비밀번호를 아는 사람도 소유자 권한을 얻습니다.
 
 ## [0.9.0] - 2026-10-26
 
-### Added
-- **Extension API** `convertToPdfBytes` (exports of `activate`) for other extensions such as PDF2Note: same pipeline, returns the PDF bytes.
+### 추가
+- **확장 API** `convertToPdfBytes` (`activate`의 반환값): PDF2Note 같은 다른 확장이 같은 변환 과정을 거친 PDF 바이트를 받아 갑니다.
+- **`pdfPageSize`에 태블릿 규격 추가**: iPad Pro 13"/11", iPad Air 13", iPad · iPad Air 11", iPad mini, Galaxy Tab S11 11", Galaxy Tab S11 Ultra · S12 Ultra (화면이 같은 기종은 한 항목으로 묶음). 페이지 크기는 기기 화면의 논리 크기(CSS px)입니다.
 
-- **Tablet page sizes** in `pdfPageSize`: iPad Pro 13"/11", iPad Air 13", iPad / iPad Air 11", iPad mini, Galaxy Tab S11 11", Galaxy Tab S11 Ultra / S12 Ultra (models with the same panel share one entry). Pages are the device's logical screen size in CSS px.
+### 변경
+- **`pageBreakBefore` 기본값을 `none`으로** 바꿨습니다 (h1 제목 앞에서 페이지를 나누지 않음). `h1`과 `h1-h2`는 그대로 고를 수 있습니다.
 
-### Changed
-- **`pageBreakBefore` defaults to `none`** (no page break before h1 headings); `h1` and `h1-h2` remain available.
-
-### Fixed
-- The progress notification stayed open until the completion warning or error message was dismissed.
+### 수정
+- 완료 경고나 오류 메시지를 닫을 때까지 진행률 알림이 사라지지 않던 문제.
 
 ## [0.8.0] - 2026-10-25
 
-### Added
-- **Settings reorganised by importance** and 27 new ones:
-  - Output file: `outputDirectory`, `outputFileName` (`{name}`, `{date}`), `openAfterConvert`.
-  - Header/footer: `headerText`, `footerText` (`{file}`, `{date}`, `{page}`, `{total}`; empty = none), `headerAlign`, `footerAlign`, `headerFooterFontSize`.
-  - Page breaks: `pageBreakBefore` (`h1` | `h1-h2` | `none`), `breakBeforeTags`.
-  - Content selection: `hideCodeCells`, `hideOutputs`, `excludeCellTags`.
-  - Look: `tableNowrap` (`first` | `all` | `none`), `showLineNumbers` (`auto` | `on` | `off`), `baseFontSize`, `bodyFontFamily`, `codeFontFamily`.
-  - Size: `imageFormat` (`png` | `jpeg`), `jpegQuality`.
-  - Security: `pdfPermissions` (print/copy/modify/annot-forms), `ownerPassword`.
-  - Cover and watermark: `coverPage`, `coverTitle`, `coverSubtitle`, `coverAuthor`, `watermarkImage`, `watermarkWidth`.
-  - Advanced: `allowRemoteImages`, `renderTimeoutSeconds`.
-- The Output panel no longer opens on every conversion; the error notification and the "images not embedded" warning offer a *Show Log* button instead.
-- **Progress notification** with a progress bar, stage messages (rendering, capturing chunk n/m, assembling, saving) and a Cancel button; closing the conversion view cancels too.
-- **No more overwriting**: when the target PDF exists the file is saved as `name (1).pdf`, `name (2).pdf`, …
-- **Korean UI strings**: command titles and every setting description are localised via `package.nls.json` (English) and `package.nls.ko.json`; VS Code picks the one matching its display language.
-- **Context menus in the editor body and in notebook cells** (`editor/context`, `notebook/cell/title`) carry the same conversion commands as the explorer and tab menus.
-- **Teacher mode** (`teacherMode`, last setting): adds `(hossam)` / `(jussam)` conversion commands, each with and without password, to the context menus and palette. They draw the instructor mark (`itwill-ho.png` / `itwill-ju.png`, 100 px wide) at the top right of every page in place of `headerText`, like `nb_convert.py --ssam`.
+### 추가
+- **설정을 중요도순으로 정리**하고 27개를 새로 넣었습니다.
+  - 출력 파일: `outputDirectory`, `outputFileName` (`{name}`, `{date}`), `openAfterConvert`.
+  - 머릿말 · 꼬릿말: `headerText`, `footerText` (`{file}`, `{date}`, `{page}`, `{total}`, 비우면 표시 안 함), `headerAlign`, `footerAlign`, `headerFooterFontSize`.
+  - 페이지 나누기: `pageBreakBefore` (`h1` | `h1-h2` | `none`), `breakBeforeTags`.
+  - 내용 선택: `hideCodeCells`, `hideOutputs`, `excludeCellTags`.
+  - 모양: `tableNowrap` (`first` | `all` | `none`), `showLineNumbers` (`auto` | `on` | `off`), `baseFontSize`, `bodyFontFamily`, `codeFontFamily`.
+  - 크기: `imageFormat` (`png` | `jpeg`), `jpegQuality`.
+  - 보안: `pdfPermissions` (print/copy/modify/annot-forms), `ownerPassword`.
+  - 표지 · 워터마크: `coverPage`, `coverTitle`, `coverSubtitle`, `coverAuthor`, `watermarkImage`, `watermarkWidth`.
+  - 고급: `allowRemoteImages`, `renderTimeoutSeconds`.
+- 변환할 때마다 출력 창이 열리지 않습니다. 오류 알림과 "이미지 누락" 경고의 *Show Log* 버튼으로 엽니다.
+- **진행률 알림**: 진행 막대, 단계 메시지(렌더링, 묶음 n/m 캡처, 조립, 저장), 취소 버튼. 변환 화면을 닫아도 취소됩니다.
+- **덮어쓰지 않음**: 같은 이름의 PDF가 있으면 `이름 (1).pdf`, `이름 (2).pdf`처럼 저장합니다.
+- **한글 UI**: 명령 이름과 모든 설정 설명을 `package.nls.json`(영어)과 `package.nls.ko.json`(한글)으로 제공합니다. VS Code 표시 언어에 맞는 쪽이 보입니다.
+- **편집기 본문과 노트북 셀의 우클릭 메뉴**(`editor/context`, `notebook/cell/title`)에도 탐색기 · 탭 메뉴와 같은 변환 명령이 있습니다.
+- **teacher mode** (`teacherMode`, 마지막 설정): 우클릭 메뉴와 명령 팔레트에 `(hossam)` / `(jussam)` 변환 명령을 비밀번호 유무별로 추가합니다. `nb_convert.py --ssam`처럼 강사 마크(`itwill-ho.png` / `itwill-ju.png`, 폭 100 px)를 모든 페이지 우측 상단에 `headerText` 대신 그립니다.
 
-### Fixed
-- **Long notebooks came out blank (header and footer only) at the default scale 3**: the single capture canvas exceeded Chromium's 32,767 px height limit after about ten pages and html2canvas silently returned an empty image. The document is now captured in page-aligned chunks of at most 16,000 px.
-- **Page cuts drifting in the `default` page theme**: html2canvas materialises github-markdown.css's clearfix pseudo-elements, which made every markdown cell 40 px taller in the capture than in the layout the paginator measured. The pseudo-elements are now disabled.
-- **List bullets touching the text in the Markdown Reader themes** (`•이 함수는`): html2canvas mis-places the marker whenever `letter-spacing` is non-zero, so list items now use 0 instead of MDR's 0.2 px.
-- **Oversized top gap inside raw HTML boxes in markdown** (e.g. `<div style="padding…">` feedback notes): the heading opening the box kept its 35 px document margin on top of the box padding. The first/last child of such a box now drops its outer margin, matching the notebook view.
+### 수정
+- **기본 배율 3에서 긴 노트북이 빈 페이지(머릿말 · 꼬릿말만)로 나오던 문제**: 열 쪽쯤 넘으면 캡처 캔버스가 Chromium의 높이 한계 32,767 px를 넘었고, html2canvas가 빈 그림을 조용히 돌려줬습니다. 이제 페이지 경계에 맞춘 최대 16,000 px 묶음으로 나눠 캡처합니다.
+- **`default` 페이지 테마에서 페이지 경계가 밀리던 문제**: html2canvas가 github-markdown.css의 clearfix 의사 요소를 그려서, 캡처된 마크다운 셀이 페이지 계산 때보다 40 px씩 길었습니다. 그 의사 요소를 껐습니다.
+- **Markdown Reader 테마에서 목록 기호가 글자에 붙던 문제** (`•이 함수는`): `letter-spacing`이 0이 아니면 html2canvas가 기호 위치를 잘못 잡아서, 목록 항목은 MDR의 0.2 px 대신 0을 씁니다.
+- **마크다운 안 HTML 상자(예: `<div style="padding…">` 피드백 상자) 위쪽 여백이 너무 크던 문제**: 상자를 여는 제목이 상자 안 여백에 더해 문서용 위 여백 35 px를 유지했습니다. 이런 상자의 첫 · 마지막 자식은 바깥 여백을 없애 노트북 화면과 같게 했습니다.
 
 ## [0.7.1] - 2026-10-23
 
-### Added
-- **Extension icon** (`media/icon.png`, source `media/icon.svg`): a notebook page with a code cell turning into a PDF.
+### 추가
+- **확장 아이콘** (`media/icon.png`, 원본 `media/icon.svg`): 코드 셀이 있는 노트북 페이지가 PDF가 되는 그림.
 
-### Fixed
-- **Images referenced by Markdown files (and notebook markdown cells) were missing from the PDF.** The webview may only load the extension's own media folder, so `<img src>` paths never resolved. Referenced images (relative/absolute paths, `file:` and `http(s)` URLs) are now embedded as `data:` URLs before rendering, and `attachment:` images stored in notebook cells are resolved too. Images that cannot be read are listed as warnings in the output channel.
+### 수정
+- **마크다운 파일(과 노트북 마크다운 셀)이 참조하는 이미지가 PDF에서 빠지던 문제**: 웹뷰는 확장의 media 폴더만 읽을 수 있어 `<img src>` 경로가 열리지 않았습니다. 이제 참조된 이미지(상대 · 절대 경로, `file:` · `http(s)` URL)를 렌더링 전에 `data:` URL로 넣고, 노트북 셀의 `attachment:` 이미지도 처리합니다. 읽지 못한 이미지는 출력 창에 경고로 남깁니다.
 
 ## [0.7.0] - 2026-10-23
 
-Aligns the extension with `nb_convert.py`.
+`nb_convert.py`와 결과를 맞췄습니다.
 
-### Added
-- **`pdfTheme` setting** (`default` | `light` | `dark`, default `light`): overall page theme ported from `nb_convert.py --theme`. `light`/`dark` use the Markdown Reader palette (`media/page-themes/mdr.css`, a verbatim copy of the script's `MDR_CSS`); `default` keeps the GitHub look. Code cells still follow `codeTheme`; the `leekh` chrome applies only with `default`.
-- **`pdfPageSize` / `pdfPageOrientation` settings**: paper sizes A3, A4 (default), A5, B4/B5 (JIS), Letter, Legal and a 16:9 Widescreen slide (the script's horizontal mode), portrait or landscape. Pages are laid out at 96 dpi so the PDF has the exact physical size.
-- **`pdfPassword` setting** and a second command **"Convert Notebook/Markdown to PDF (with Password)"** (context menus and palette). It encrypts with the configured password, or prompts when none is set. Permissions mirror `secure_pdf_with_pikepdf`: annotations/forms allowed, print/copy/edit denied. The plain command never encrypts. Encryption is 40-bit RC4 (jsPDF).
+### 추가
+- **`pdfTheme` 설정** (`default` | `light` | `dark`, 기본값 `light`): `nb_convert.py --theme`의 페이지 테마를 옮겼습니다. `light` · `dark`는 Markdown Reader 팔레트(`media/page-themes/mdr.css`, 스크립트의 `MDR_CSS` 그대로)를 쓰고, `default`는 GitHub 모양입니다. 코드 셀은 계속 `codeTheme`을 따르며, `leekh` 꾸밈은 `default`에서만 적용됩니다.
+- **`pdfPageSize` · `pdfPageOrientation` 설정**: A3, A4(기본), A5, B4 · B5(JIS), Letter, Legal, 16:9 와이드 슬라이드(스크립트의 가로 모드), 세로 또는 가로. 96 dpi로 배치해 PDF의 실제 크기가 정확합니다.
+- **`pdfPassword` 설정**과 두 번째 명령 **"노트북/마크다운을 PDF로 변환 (비밀번호)"** (우클릭 메뉴와 명령 팔레트). 설정한 비밀번호로 암호화하고, 비어 있으면 입력받습니다. 권한은 `secure_pdf_with_pikepdf`와 같아서 주석 · 양식만 허용하고 인쇄 · 복사 · 수정은 막습니다. 일반 변환 명령은 암호화하지 않습니다.
+- **`mdr-dark` / `mdr-light` 코드 테마** (기본값 `mdr-dark`): `nb_convert.py --code-theme`의 Markdown Reader One Dark/Light 팔레트.
+- **WeasyPrint 같은 페이지 나누기**: 글줄 · 표 행 · 그림 중간에서 자르지 않고, 제목은 다음 내용과 같은 페이지에 둡니다. 첫 번째 다음의 모든 `h1`은 새 페이지에서 시작합니다 (`h1:not(:first-of-type) { break-before: page }`).
+- 출력(stream, 결과, 트레이스백)의 **ANSI 색**을 지우지 않고 ansi2html 팔레트로 그립니다.
+- **머릿말 · 꼬릿말**: 모든 페이지 우측 상단에 파일명(확장자 제외), 우측 하단에 `쪽 / 전체`를 10 px 회색으로 여백 띠 가운데에 넣습니다. 웹뷰에서 그리므로 한글 파일명도 그대로 나옵니다.
 
-- **`mdr-dark` / `mdr-light` code themes** (default `mdr-dark`): the Markdown Reader One Dark/Light palettes from `nb_convert.py --code-theme`.
-- **Pagination like WeasyPrint**: pages no longer cut through a line of text, a table row or an image; a heading stays with what follows; every `h1` after the first starts a new page (`h1:not(:first-of-type) { break-before: page }`).
-- **ANSI colours** in outputs (stream, results, tracebacks) are rendered with ansi2html's palette instead of being stripped.
-- **Running header and footer**: the file name (without extension) at the top right and `page / total` at the bottom right of every page, 10 px grey, centred in the margin band. Drawn in the webview, so Korean names need no embedded PDF font.
+### 변경
+- **`light` · `dark` 페이지 테마가 `nb_convert.py`의 세로(A4) 레이아웃을 그대로 재현합니다**: Helvetica Neue + Noto Sans CJK KR 본문, `.9em` 글자, 줄 번호 없는 코드 셀(Menlo 12.24 px, 둥근 상자, 20 px 여백), 촘촘한 출력 상자(11.56 px, 줄 간격 1.1, 왼쪽 강조선 4 px), 첫 열이 굵고 줄무늬가 있는 전체 폭 표, 가운데 정렬 그림, 이어진 텍스트 출력을 빈 줄 하나로 합친 상자(`nbconvert --to markdown` + pandoc과 같음).
+- **`pdfPageMargin` 기본값을 `48`로** (0.5 in, 스크립트의 `@page` 여백). Markdown Reader 테마는 그 안에 스크립트의 본문 여백 30 px를 더합니다: 모든 페이지 좌우, 첫 페이지 위, 마지막 페이지 아래.
+- dark 페이지 테마는 여백까지 종이 색으로 칠합니다.
 
-### Changed
-- **`light`/`dark` page themes reproduce `nb_convert.py`'s vertical (A4) layout exactly**: Helvetica Neue + Noto Sans CJK KR body, `.9em` text, code cells without line numbers (Menlo 12.24 px, rounded box, 20 px margins), compact output boxes (11.56 px, line-height 1.1, 4 px left accent), full-width tables with a snug bold first column and striped rows, centred images, and consecutive text outputs merged into one box with a blank line between them, as `nbconvert --to markdown` + pandoc produce.
-- **`pdfPageMargin` default is now `48`** (0.5 in, the script's `@page` margin). The Markdown Reader themes add the script's 30 px body margin inside it: both sides of every page, top of the first page and bottom of the last.
-- Dark page theme paints the paper color across the whole page, margins included.
+### 수정
+- **표 테두리가 `nb_convert.py`보다 두껍게(겹쳐) 그려지던 문제**: html2canvas는 `border-collapse`를 지원하지 않아 셀마다 공유 변에 테두리를 그렸습니다. 이제 모든 테마가 한쪽 테두리만으로 1 px 격자를 만듭니다.
 
-### Fixed
-- **Table borders rendered doubled/heavier than `nb_convert.py`**: html2canvas has no `border-collapse`, so every cell's border was painted on the shared edge. All themes now build the 1px grid from one-sided separate borders.
-
-### Removed
-- **`pdfPageWidth` / `pdfPageHeight`** (CSS px). Use `pdfPageSize` + `pdfPageOrientation` instead; the Galaxy Tab preset is gone.
+### 제거
+- **`pdfPageWidth` / `pdfPageHeight`** (CSS px). `pdfPageSize` + `pdfPageOrientation`을 쓰세요. Galaxy Tab 프리셋도 없앴습니다.
 
 ## [0.5.0] - 2026-05-22
 
-### Added
-- **Markdown (`.md`) support**: both commands now convert standalone `.md` files to PNG/PDF in addition to `.ipynb`. Context-menu, command-palette, and active-editor entry points all recognize `.md`.
-- **`leekh` code theme**: a light, A4-print-style theme ported from `nb_convert.py`'s vertical mode — emoji-prefixed colored headings (📚📘📝✏️📄), light code/output blocks with left-accented outputs, and GitHub-style tables with a bold first column. Selectable via `ipynb-to-png-converter.codeTheme`.
+### 추가
+- **마크다운(`.md`) 지원**: 두 명령 모두 `.ipynb`뿐 아니라 `.md` 파일도 PNG/PDF로 변환합니다. 우클릭 메뉴, 명령 팔레트, 활성 편집기 모두 `.md`를 인식합니다.
+- **`leekh` 코드 테마**: `nb_convert.py` 세로 모드에서 옮긴 밝은 A4 인쇄 스타일. 이모지가 붙은 색 제목(📚📘📝✏️📄), 왼쪽 강조선이 있는 밝은 코드 · 출력 상자, 첫 열이 굵은 GitHub 스타일 표. `ipynb-to-png-converter.codeTheme`에서 고릅니다.
 
-### Changed
-- Commands renamed to **"Convert Notebook/Markdown to PNG/PDF"** to reflect Markdown support.
+### 변경
+- 마크다운 지원에 맞춰 명령 이름을 **"Convert Notebook/Markdown to PNG/PDF"**로 바꿨습니다.
 
 ## [0.4.1] - 2026-05-21
 
-### Added
-- **`pdfPageMargin` setting** (default `32` CSS px) — inner margin applied on all four sides of every PDF page. Content is now rendered into the `pageWidth - 2×margin` × `pageHeight - 2×margin` content area and centered on each page.
+### 추가
+- **`pdfPageMargin` 설정** (기본값 `32` CSS px): 모든 PDF 페이지의 네 변에 안쪽 여백을 둡니다. 내용은 `페이지 폭 - 2×여백` × `페이지 높이 - 2×여백` 영역에 그려 가운데 놓습니다.
 
-### Changed
-- **`imageWidth` default lowered from `960` → `800`** so PNG and PDF share the same rendering width by default.
+### 변경
+- **`imageWidth` 기본값을 `960` → `800`으로** 낮춰 PNG와 PDF가 기본으로 같은 폭으로 렌더링되게 했습니다.
 
 ## [0.4.0] - 2026-05-21
 
-### Added
-- **Multi-page PDF output**: PDF is now paginated. The captured notebook is sliced into fixed-size pages so it can be flipped through page-by-page in any standard PDF viewer.
-- **Separate width settings for PNG and PDF**:
-  - `pdfPageWidth` (default `800`) — width of each PDF page in CSS pixels.
-  - `pdfPageHeight` (default `1280`) — height of each PDF page in CSS pixels.
-  - Defaults are optimized for **Galaxy Tab S9 portrait** (800 × 1280 CSS px → 1600 × 2560 px at the device's 2× DPR).
-- Output channel now reports page count for PDF runs.
+### 추가
+- **여러 페이지 PDF**: 캡처한 노트북을 일정한 크기의 페이지로 잘라, 일반 PDF 뷰어에서 한 장씩 넘겨 볼 수 있습니다.
+- **PNG와 PDF의 폭 설정 분리**:
+  - `pdfPageWidth` (기본값 `800`): PDF 페이지 폭(CSS px).
+  - `pdfPageHeight` (기본값 `1280`): PDF 페이지 높이(CSS px).
+  - 기본값은 **Galaxy Tab S9 세로**(800 × 1280 CSS px, 기기 2배 DPR에서 1600 × 2560 px)에 맞췄습니다.
+- PDF 변환 때 출력 창에 페이지 수를 표시합니다.
 
-### Changed
-- `imageWidth` is now PNG-only; PDF uses the dedicated `pdfPageWidth` / `pdfPageHeight` pair.
-- Webview script now produces an array of page data URLs; PNG runs return a single-page array (no behavior change for PNG output).
+### 변경
+- `imageWidth`는 PNG 전용입니다. PDF는 `pdfPageWidth` / `pdfPageHeight`를 씁니다.
+- 웹뷰 스크립트가 페이지별 data URL 배열을 만듭니다. PNG는 한 장짜리 배열을 돌려줍니다(PNG 결과는 그대로).
 
 ## [0.3.0] - 2026-05-21
 
-### Added
-- **PDF export**: New `Convert Jupyter Notebook to PDF` command, available from the Explorer context menu, editor tab context menu, and Command Palette. Generated PDF preserves the same rendering as the PNG output.
-- GitHub Actions workflow (`.github/workflows/build-and-publish.yml`) that automatically lints, type-checks, bundles, packages, and publishes the extension to the VSCode Marketplace whenever a commit message pushed to `main` contains the word `build`. Also uploads the `.vsix` as a workflow artifact and creates a tagged GitHub Release.
-- `npm run package` / `npm run publish` shortcuts for local `vsce` runs.
+### 추가
+- **PDF 내보내기**: 새 명령 `Convert Jupyter Notebook to PDF`를 탐색기 우클릭 메뉴, 편집기 탭 메뉴, 명령 팔레트에서 쓸 수 있습니다. PNG와 같은 렌더링 결과를 PDF로 저장합니다.
+- GitHub Actions 워크플로(`.github/workflows/build-and-publish.yml`): `main`에 push한 커밋 메시지에 `build`가 있으면 린트, 타입 검사, 번들, 패키징을 거쳐 VS Code Marketplace에 자동 배포합니다. `.vsix`를 워크플로 결과물로 올리고 태그가 달린 GitHub 릴리스도 만듭니다.
+- 로컬 `vsce` 실행용 `npm run package` / `npm run publish`.
 
-### Changed
-- **Smartphone-optimized default width**: `imageWidth` default lowered from `1024` to `360` (Galaxy S25 logical CSS width). With the default `deviceScaleFactor` of `3`, the captured PNG is 1080 px wide — exactly the physical pixel width of a Galaxy S25 screen.
-- **Bundled distribution with esbuild**: extension code is now bundled into a single minified `out/extension.js`. `node_modules` is excluded from the `.vsix` package, dramatically reducing the install footprint (was ~79 MB of node_modules shipped in v0.2.0).
-- `vscode:prepublish` now runs `vendor → typecheck → build` instead of plain `tsc`.
+### 변경
+- **스마트폰에 맞춘 기본 폭**: `imageWidth` 기본값을 `1024`에서 `360`(Galaxy S25 논리 폭)으로 낮췄습니다. 기본 `deviceScaleFactor` `3`과 함께 PNG 폭이 1080 px로, Galaxy S25 화면의 실제 픽셀 폭과 같습니다.
+- **esbuild 번들 배포**: 확장 코드를 압축된 `out/extension.js` 하나로 묶습니다. `.vsix`에서 `node_modules`를 빼서 설치 크기가 크게 줄었습니다(v0.2.0은 node_modules만 약 79 MB).
+- `vscode:prepublish`가 단순 `tsc` 대신 `vendor → typecheck → build`를 실행합니다.
 
-### Removed
-- `tsc`-emitted per-file JS in `out/` (replaced by a single esbuild bundle).
+### 제거
+- `tsc`가 파일마다 만들던 `out/`의 JS (esbuild 번들 하나로 대체).
 
 ## [0.1.0] - 2026-05-21
 
-### Changed
-- **Complete architectural rewrite**: Removed Python, nbconvert, Playwright, and Chromium dependencies. Conversion now runs entirely in TypeScript via VSCode's built-in Webview + html2canvas. Users no longer need to install any external runtime.
-- Code cell font size increased to 14px for better readability.
-- Removed `In[N]:` / `Out[N]:` prompts for a cleaner look.
+### 변경
+- **구조를 완전히 새로 짰습니다**: Python, nbconvert, Playwright, Chromium 의존성을 없앴습니다. 변환은 VS Code 내장 웹뷰와 html2canvas로 TypeScript 안에서만 이뤄집니다. 외부 런타임을 설치할 필요가 없습니다.
+- 가독성을 위해 코드 셀 글자 크기를 14px로 키웠습니다.
+- 깔끔한 모양을 위해 `In[N]:` / `Out[N]:` 프롬프트를 없앴습니다.
 
-### Added
-- `codeTheme` setting — choose syntax highlighting theme: Dracula (default), GitHub Light, GitHub Dark, Atom One Light, Atom One Dark, Monokai, Nord, Visual Studio Dark.
-- `imageWidth` setting — customize generated PNG width (480–2400 px).
-- Line numbers in source code cells.
-- GitHub-styled markdown rendering for text cells (via `github-markdown-css`).
-- Context menu entries for editor tabs and command palette in addition to Explorer sidebar.
-- Auto-detect active notebook editor when the command is invoked without an explicit file URI (e.g., from the command palette).
+### 추가
+- `codeTheme` 설정: 코드 하이라이트 테마 선택. Dracula(기본), GitHub Light, GitHub Dark, Atom One Light, Atom One Dark, Monokai, Nord, Visual Studio Dark.
+- `imageWidth` 설정: 생성할 PNG 폭(480–2400 px).
+- 소스 코드 셀 줄 번호.
+- 텍스트 셀을 GitHub 스타일 마크다운으로 렌더링(`github-markdown-css`).
+- 탐색기 사이드바 외에 편집기 탭 우클릭 메뉴와 명령 팔레트 항목.
+- 파일을 지정하지 않고 명령을 실행하면(예: 명령 팔레트) 활성 노트북 편집기를 자동으로 찾습니다.
 
-### Removed
-- Python scripts (`ipynb_to_png.py`, `python_scripts/convert.py`).
-- `child-process-promise` npm dependency.
+### 제거
+- Python 스크립트 (`ipynb_to_png.py`, `python_scripts/convert.py`).
+- `child-process-promise` npm 의존성.
 
-### Fixed
-- `.vscodeignore` no longer excludes `node_modules`, so runtime dependencies ship inside the `.vsix`.
-- Build artifacts (`out/`) are produced reliably before activation.
+### 수정
+- `.vscodeignore`가 더는 `node_modules`를 빼지 않아 실행 의존성이 `.vsix`에 들어갑니다.
+- 활성화 전에 빌드 결과물(`out/`)이 확실히 만들어집니다.
 
 ## [0.0.1] - 2026-05-20
 
-### Added
-- Initial release of Jupyter to PNG Converter
-- Convert .ipynb files to high-quality PNG images
-- Context menu integration in VSCode Explorer
-- Configurable device scale factor (1-5) for image resolution
-- Support for custom viewport settings
-- Automatic temporary file cleanup
-- Output channel for conversion progress and error messages
+### 추가
+- Jupyter to PNG Converter 첫 배포.
+- .ipynb 파일을 고품질 PNG 이미지로 변환.
+- VS Code 탐색기 우클릭 메뉴.
+- 이미지 해상도용 장치 배율(1-5) 설정.
+- 사용자 지정 뷰포트 설정.
+- 임시 파일 자동 정리.
+- 변환 진행 상황과 오류를 보여 주는 출력 창.
 
-### Features
-- nbconvert integration for HTML conversion
-- Playwright-based screenshot capture
-- Responsive viewport adjustment based on content height
-- Real-time status messages and notifications
+### 기능
+- nbconvert로 HTML 변환.
+- Playwright 기반 화면 캡처.
+- 내용 높이에 맞춘 뷰포트 조정.
+- 실시간 상태 메시지와 알림.

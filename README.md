@@ -22,7 +22,7 @@ Python도 Chromium도 설치하지 않습니다. VS Code 안에서 렌더링부�
 
 <br>
 
-![우클릭부터 PDF 저장까지: HTML 생성, Webview 렌더링, 캡처와 페이지 분할, jsPDF 조립](media/readme/pipeline.png)
+![우클릭부터 PDF 저장까지: HTML 생성, Webview 렌더링, 캡처와 페이지 분할, pdf-lib 조립](media/readme/pipeline.png)
 
 > 아이티윌 이광호 강사의 수업용으로 만들었습니다. `nb_convert.py`와 같은 결과를 VS Code에서 냅니다.
 
@@ -34,8 +34,9 @@ Python도 Chromium도 설치하지 않습니다. VS Code 안에서 렌더링부�
 | 📐 **용지 규격** | A3 · A4 · A5 · B4 · B5 · Letter · Legal · 16:9 와이드 · 태블릿 7종(iPad · Galaxy Tab), 세로/가로 |
 | ✂️ **똑똑한 페이지 나누기** | 글줄 · 표 행 · 그림 중간에서는 자르지 않음 |
 | 🎨 **테마** | 페이지 테마 3종, 코드 하이라이트 11종 |
+| 📋 **텍스트 복사 · 검색** | 보이는 글자를 드래그해서 복사하고 PDF 뷰어에서 검색할 수 있음. 코드 들여쓰기도 그대로 복사됨 |
 | 🖼️ **이미지 그대로** | 상대·절대 경로, `file:` · `http(s)` URL, 셀 첨부(`attachment:`) 모두 PDF에 포함. 못 찾은 이미지는 경고 |
-| 🔒 **비밀번호** | 열람 비밀번호와 권한(인쇄 · 복사 · 수정 · 주석) |
+| 🔒 **비밀번호** | AES-256 암호화, 열람 비밀번호와 권한(인쇄 · 복사 · 수정 · 주석) |
 | 📦 **의존성 0** | Python · nbconvert · Playwright · Chromium 설치 불필요 |
 | 🌐 **한국어 UI** | VS Code 표시 언어가 한국어면 한글, 그 외에는 영어 |
 
@@ -162,8 +163,8 @@ ext install leekh.ipynb-pdf-converter
 
 | 설정 | 기본값 | 설명 |
 |:--|:--|:--|
-| `pdfPassword` | 비움 | 비우면 실행 때마다 팝업. `settings.json`에 평문으로 저장되며, 암호화는 40-bit RC4(jsPDF)로 가벼운 열람 제한용 |
-| `pdfPermissions` | `["annot-forms"]` | 열람자에게 허용할 작업 `print` · `copy` · `modify` · `annot-forms`(`nb_convert.py`와 동일) |
+| `pdfPassword` | 비움 | 비우면 실행 때마다 팝업. `settings.json`에 평문으로 저장됨. 암호화는 AES-256 |
+| `pdfPermissions` | `["annot-forms"]` | 열람자에게 허용할 작업 `print` · `copy` · `modify` · `annot-forms`(`nb_convert.py`와 동일). 텍스트 복사를 허용하려면 `copy`를 넣음 |
 | `ownerPassword` | 비움 | 비우면 PDF 비밀번호(`pdfPassword` 또는 팝업 입력값)와 같음. 이때는 그 비밀번호를 아는 사람에게 `pdfPermissions` 제한이 적용되지 않음 |
 
 </details>

@@ -34,8 +34,8 @@ export interface PageDimensions {
   heightPx: number;
 }
 
-// The webview and jsPDF (unit 'px' with the px_scaling hotfix) both treat
-// 1 CSS px as 1/96 in, so converting at 96 dpi keeps the physical size exact.
+// The webview treats 1 CSS px as 1/96 in and the PDF assembly converts at
+// 0.75 pt per px, so converting at 96 dpi keeps the physical size exact.
 export function resolvePageDimensions(
   size: string | undefined,
   orientation: string | undefined

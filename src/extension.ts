@@ -1,7 +1,8 @@
 import * as vscode from 'vscode';
 import * as path from 'path';
 import { promises as fs } from 'fs';
-import { jsPDF } from 'jspdf';
+import { PDFDocument, PDFFont, PDFPage, TextRenderingMode, popGraphicsState, pushGraphicsState, setCharacterSqueeze } from '@cantoo/pdf-lib';
+import fontkit from '@cantoo/fontkit';
 import { renderNotebook, renderMarkdown } from './render';
 import { Notebook } from './notebook';
 import { isDarkColor, resolvePageTheme, resolveTheme } from './themes';
@@ -408,7 +409,7 @@ async function runConversion(
 }
 
 // Renders the source to PDF bytes: document assembly, webview capture and
-// jsPDF assembly. Shared by the commands and the extension API.
+// pdf-lib assembly. Shared by the commands and the extension API.
 async function producePdf(
   context: vscode.ExtensionContext,
   filePath: string,
@@ -451,7 +452,7 @@ async function producePdf(
   );
   report('Capturing pages…', 0.1);
   // The webview reports each captured chunk; capture spans 10%..85%.
-  const pages = await captureInWebview(context, { bodyHtml, settings, vars, markImage }, token, (done, total) =>
+  const { pages, texts } = await captureInWebview(context, { bodyHtml, settings, vars, markImage }, token, (done, total) =>
     report(`Capturing pages… (${done}/${total})`, 0.1 + (done / total) * 0.75)
   );
 
@@ -459,7 +460,8 @@ async function producePdf(
   outputChannel.appendLine(
     `Assembling PDF (${pages.length} page${pages.length === 1 ? '' : 's'}${password ? ', password protected' : ''})…`
   );
-  const buffer = await generatePdfFromPages(pages, layout.widthPx, layout.heightPx, {
+  const buffer = await generatePdfFromPages(pages, texts, layout.widthPx, layout.heightPx, {
+    fontBytes: await readTextFont(context),
     password,
     ownerPassword: settings.ownerPassword,
     permissions: settings.pdfPermissions,
@@ -554,12 +556,38 @@ export interface CaptureParams {
   markImage?: string;
 }
 
+// One line of text on a page, in CSS px from the page's top-left corner.
+export interface TextRun {
+  t: string;
+  x: number;
+  y: number;
+  w: number;
+  h: number;
+  fs: number; // font size
+}
+
+export interface CaptureResult {
+  pages: string[]; // one image data: URL per page
+  texts: TextRun[][]; // the text drawn on each page, for the invisible text layer
+}
+
+let textFontCache: Uint8Array | undefined;
+
+// The text layer needs a font with Hangul; only the glyphs used are embedded.
+async function readTextFont(context: vscode.ExtensionContext): Promise<Uint8Array> {
+  if (!textFontCache) {
+    const fontPath = context.asAbsolutePath(path.join('media', 'fonts', 'NanumGothic.ttf'));
+    textFontCache = new Uint8Array(await fs.readFile(fontPath));
+  }
+  return textFontCache;
+}
+
 async function captureInWebview(
   context: vscode.ExtensionContext,
   params: CaptureParams,
   token: vscode.CancellationToken,
   onProgress: (done: number, total: number) => void
-): Promise<string[]> {
+): Promise<CaptureResult> {
   const mediaRoot = vscode.Uri.joinPath(context.extensionUri, 'media');
 
   const panel = vscode.window.createWebviewPanel(
@@ -609,7 +637,9 @@ async function captureInWebview(
         if (msg?.type === 'progress') {
           onProgress(Number(msg.done), Number(msg.total));
         } else if (msg?.type === 'result') {
-          finish(() => resolve((msg.pages as string[]) ?? [msg.dataUrl as string]));
+          const pages = msg.pages as string[];
+          const texts = (msg.texts as TextRun[][] | undefined) ?? pages.map(() => []);
+          finish(() => resolve({ pages, texts }));
         } else if (msg?.type === 'error') {
           finish(() => reject(new Error(String(msg.message ?? 'Unknown webview error'))));
         }
@@ -888,7 +918,9 @@ function buildWebviewHtml(params: {
     return chunks;
   }
 
-  function sliceIntoPages(srcCanvas, chunk, firstPageNo, pageCount) {
+  // Each page as { image, text }: the text runs whose middle falls inside the
+  // page's cut, moved into page coordinates, plus the header and footer.
+  function sliceIntoPages(srcCanvas, chunk, firstPageNo, pageCount, runs) {
     const W = Math.round(cfg.pageW * scale);
     const H = Math.round(cfg.pageH * scale);
     const M = Math.round(cfg.margin * scale);
@@ -902,24 +934,36 @@ function buildWebviewHtml(params: {
       ctx.fillStyle = cfg.background;
       ctx.fillRect(0, 0, W, H);
       if (sh > 0) ctx.drawImage(srcCanvas, 0, sy, srcCanvas.width, sh, M, M, srcCanvas.width, sh);
-      drawRunning(ctx, W, H, M, firstPageNo + i, pageCount);
-      return encodePage(page);
+      const text = runs
+        .filter((r) => r.y + r.h / 2 >= y0 && r.y + r.h / 2 < y1)
+        .map((r) => ({ t: r.t, x: cfg.margin + r.x, y: cfg.margin + r.y - y0, w: r.w, h: r.h, fs: r.fs }));
+      text.push(...drawRunning(ctx, W, H, M, firstPageNo + i, pageCount));
+      return { image: encodePage(page), text };
     });
   }
 
   let markImg = null; // teacher mode: decoded instructor mark
 
+  // Returns the header/footer as text runs (CSS px) for the text layer.
   function drawRunning(ctx, W, H, M, pageNo, pageCount) {
+    const runs = [];
     const px = cfg.runningFontPx * scale;
     ctx.fillStyle = RUNNING_COLOR;
     ctx.font = px + 'px "Helvetica Neue", -apple-system, "Segoe UI", "Noto Sans CJK KR", sans-serif';
     ctx.textBaseline = 'middle';
     const place = (part, y) => {
       if (!part.text || M < 2 * px) return; // margin band too thin to hold the text
-      const text = part.text.replace(/\\{page\\}/g, String(pageNo)).replace(/\\{total\\}/g, String(pageCount));
+      const text = fitText(
+        ctx,
+        part.text.replace(/\\{page\\}/g, String(pageNo)).replace(/\\{total\\}/g, String(pageCount)),
+        W - 2 * M
+      );
       ctx.textAlign = part.align;
       const x = part.align === 'left' ? M : part.align === 'center' ? W / 2 : W - M;
-      ctx.fillText(fitText(ctx, text, W - 2 * M), x, y);
+      ctx.fillText(text, x, y);
+      const w = ctx.measureText(text).width;
+      const left = part.align === 'left' ? x : part.align === 'center' ? x - w / 2 : x - w;
+      runs.push({ t: text, x: left / scale, y: (y - px * 0.6) / scale, w: w / scale, h: (px * 1.2) / scale, fs: cfg.runningFontPx });
     };
     if (markImg) {
       // Right-aligned to the content edge, centred in the top margin band and
@@ -936,6 +980,7 @@ function buildWebviewHtml(params: {
       place(cfg.header, M / 2);
     }
     place(cfg.footer, H - M / 2);
+    return runs;
   }
 
   function loadMark() {
@@ -955,8 +1000,102 @@ function buildWebviewHtml(params: {
     return t + '\\u2026';
   }
 
+  function isSpaceCode(c) {
+    return c === 32 || c === 9 || c === 13 || c === 12 || c === 160;
+  }
+
+  // The text the page images show, as runs of one line each (CSS px from the
+  // top-left of the root). The PDF lays them over the images as invisible text
+  // so it can be selected, copied and searched. Pieces on one line merge into a
+  // run; a wide gap (table cells) starts a new run. Whitespace in pre/code
+  // blocks is kept so indentation survives a copy.
+  function collectTextRuns(root) {
+    const rootRect = root.getBoundingClientRect();
+    const runs = [];
+    const range = document.createRange();
+    let cur = null;
+    let pendingSpace = false;
+    const flush = () => {
+      if (cur && cur.t.trim()) runs.push(cur);
+      cur = null;
+      pendingSpace = false;
+    };
+    const add = (text, r, fs) => {
+      const x = r.left - rootRect.left;
+      const y = r.top - rootRect.top;
+      if (cur) {
+        const end = cur.x + cur.w;
+        const gap = x - end;
+        const sameLine = Math.abs(y + r.height / 2 - (cur.y + cur.h / 2)) < Math.max(2, Math.min(r.height, cur.h) / 2);
+        if (sameLine && gap > -fs * 0.3 && gap < fs * 1.2) {
+          const lastSpace = cur.t.charCodeAt(cur.t.length - 1) === 32;
+          if ((pendingSpace || gap > fs * 0.2) && !lastSpace && text.charCodeAt(0) !== 32) cur.t += ' ';
+          cur.t += text;
+          const top = Math.min(cur.y, y);
+          const bottom = Math.max(cur.y + cur.h, y + r.height);
+          cur.w = Math.max(end, r.right - rootRect.left) - cur.x;
+          cur.y = top;
+          cur.h = bottom - top;
+          cur.fs = Math.max(cur.fs, fs);
+          pendingSpace = false;
+          return;
+        }
+        flush();
+      }
+      cur = { t: text, x: x, y: y, w: r.width, h: r.height, fs: fs };
+      pendingSpace = false;
+    };
+    const rectsOf = (node, start, end) => {
+      range.setStart(node, start);
+      range.setEnd(node, end);
+      return Array.from(range.getClientRects()).filter((r) => r.width > 0 && r.height > 0);
+    };
+    const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT);
+    for (let node = walker.nextNode(); node; node = walker.nextNode()) {
+      const el = node.parentElement;
+      const data = node.data;
+      if (!el || !data || el.closest('script, style, svg, .jp-Watermark')) continue;
+      const cs = getComputedStyle(el);
+      if (cs.visibility === 'hidden') continue;
+      const fs = parseFloat(cs.fontSize) || 16;
+      const pre = cs.whiteSpace.indexOf('pre') === 0 || cs.whiteSpace === 'break-spaces';
+      let i = 0;
+      while (i < data.length) {
+        const c = data.charCodeAt(i);
+        if (c === 10) {
+          if (pre) flush();
+          else pendingSpace = true;
+          i++;
+          continue;
+        }
+        const space = isSpaceCode(c);
+        let j = i + 1;
+        while (j < data.length && data.charCodeAt(j) !== 10 && isSpaceCode(data.charCodeAt(j)) === space) j++;
+        if (space && !pre) {
+          pendingSpace = true;
+          i = j;
+          continue;
+        }
+        const rects = rectsOf(node, i, j);
+        if (rects.length === 1) {
+          add(data.slice(i, j), rects[0], fs);
+        } else if (rects.length > 1) {
+          // The piece wraps onto the next line: place it character by character.
+          for (let k = i; k < j; k++) {
+            const rk = rectsOf(node, k, k + 1);
+            if (rk.length) add(data[k], rk[0], fs);
+          }
+        }
+        i = j;
+      }
+    }
+    flush();
+    return runs;
+  }
+
   function capture() {
     const target = document.getElementById('capture-root');
+    const runs = collectTextRuns(target);
     const boxes = collectKeepTogether(target);
     const forced = forcedBreaks(target, boxes);
     const rect = target.getBoundingClientRect();
@@ -964,6 +1103,7 @@ function buildWebviewHtml(params: {
     if (cuts.length === 0) cuts.push([0, 1]); // empty document: still one page
     const chunks = groupCuts(cuts, MAX_CHUNK_PX / scale);
     const pages = [];
+    const texts = [];
     let firstPageNo = 1;
     let chain = Promise.resolve();
     for (const chunk of chunks) {
@@ -984,14 +1124,17 @@ function buildWebviewHtml(params: {
           })
         )
         .then((canvas) => {
-          pages.push(...sliceIntoPages(canvas, chunk, pageNo, cuts.length));
+          for (const page of sliceIntoPages(canvas, chunk, pageNo, cuts.length, runs)) {
+            pages.push(page.image);
+            texts.push(page.text);
+          }
           vscode.postMessage({ type: 'progress', done: chunks.indexOf(chunk) + 1, total: chunks.length });
         });
       firstPageNo += chunk.cuts.length;
     }
     chain
       .then(() => {
-        vscode.postMessage({ type: 'result', pages, debug: { forced, cuts, chunks: chunks.length } });
+        vscode.postMessage({ type: 'result', pages, texts, debug: { forced, cuts, chunks: chunks.length } });
       })
       .catch((err) => {
         vscode.postMessage({ type: 'error', message: String(err && err.message || err) });
@@ -1030,40 +1173,115 @@ function escapeAttr(text: string): string {
   return escapeHtml(text);
 }
 
+// pdf-lib works in points; the page and the runs are in CSS px (1/96 in).
+const PT_PER_CSS_PX = 0.75;
+
 export async function generatePdfFromPages(
   pages: string[],
+  texts: TextRun[][],
   pageWidthCss: number,
   pageHeightCss: number,
-  options: { password?: string; ownerPassword?: string; permissions?: Permission[] }
+  options: { fontBytes?: Uint8Array; password?: string; ownerPassword?: string; permissions?: Permission[] }
 ): Promise<Buffer> {
-  const orientation = pageHeightCss >= pageWidthCss ? 'portrait' : 'landscape';
-  const pdf = new jsPDF({
-    orientation,
-    unit: 'px',
-    format: [pageWidthCss, pageHeightCss],
-    hotfixes: ['px_scaling'],
-    compress: true,
-    // jsPDF only offers 40-bit RC4. Default permissions mirror
-    // secure_pdf_with_pikepdf in nb_convert.py (annotations/forms only). An
-    // empty ownerPassword falls back to the user password, so the author can
-    // always lift the limits; anyone with that password gets owner rights too.
-    encryption: options.password
-      ? {
-          userPassword: options.password,
-          ownerPassword: options.ownerPassword || options.password,
-          userPermissions: options.permissions ?? ['annot-forms'],
-        }
-      : undefined,
-  });
-  // Each page image already carries margins, paper color, header and footer.
+  const pdf = await PDFDocument.create();
+  pdf.registerFontkit(fontkit);
+  const hasText = texts.some((page) => page.length > 0);
+  const font = options.fontBytes && hasText ? await pdf.embedFont(options.fontBytes, { subset: true }) : undefined;
+  const supported = font ? new Set(font.getCharacterSet()) : new Set<number>();
+  const widthCache = new Map<number, number>();
+  const W = pageWidthCss * PT_PER_CSS_PX;
+  const H = pageHeightCss * PT_PER_CSS_PX;
+  // Each page image already carries margins, paper color, header and footer;
+  // the text layer goes on top of it, invisible.
   for (let i = 0; i < pages.length; i++) {
-    if (i > 0) {
-      pdf.addPage([pageWidthCss, pageHeightCss], orientation);
-    }
-    const format = pages[i].startsWith('data:image/jpeg') ? 'JPEG' : 'PNG';
-    pdf.addImage(pages[i], format, 0, 0, pageWidthCss, pageHeightCss, undefined, 'FAST');
+    const page = pdf.addPage([W, H]);
+    const [meta, data] = pages[i].split(',', 2);
+    const bytes = Buffer.from(data, 'base64');
+    const image = meta.includes('image/jpeg') ? await pdf.embedJpg(bytes) : await pdf.embedPng(bytes);
+    page.drawImage(image, { x: 0, y: 0, width: W, height: H });
+    if (font) drawTextLayer(page, font, texts[i] ?? [], H, supported, widthCache);
   }
-  return Buffer.from(pdf.output('arraybuffer'));
+  // Default permissions mirror secure_pdf_with_pikepdf in nb_convert.py
+  // (annotations/forms only). An empty ownerPassword falls back to the user
+  // password, so the author can always lift the limits; anyone with that
+  // password gets owner rights too.
+  if (options.password) {
+    pdf.encrypt({
+      userPassword: options.password,
+      ownerPassword: options.ownerPassword || options.password,
+      permissions: permissionFlags(options.permissions ?? ['annot-forms']),
+      algorithm: 'AES-256',
+    });
+  }
+  return Buffer.from(await pdf.save());
+}
+
+// Writes each run as invisible text (render mode 3) stretched horizontally to
+// the width it has on the image, so selection lines up with what is shown.
+// Characters the font lacks (e.g. emoji) are left out of the layer.
+function drawTextLayer(
+  page: PDFPage,
+  font: PDFFont,
+  runs: TextRun[],
+  pageHeightPt: number,
+  supported: Set<number>,
+  widthCache: Map<number, number>
+): void {
+  for (const run of runs) {
+    let text = '';
+    for (const ch of run.t.replace(/\t/g, '    ')) {
+      if (supported.has(ch.codePointAt(0) ?? 0)) text += ch;
+    }
+    if (!text.trim()) continue;
+    const size = Math.max(1, run.fs * PT_PER_CSS_PX);
+    const natural = textWidth(font, text, widthCache) * size;
+    const target = run.w * PT_PER_CSS_PX;
+    const squeeze = natural > 0 ? clamp((target / natural) * 100, 1, 1000) : 100;
+    // Baseline about a third of an em below the middle of the line box.
+    const baseline = run.y + run.h / 2 + run.fs * 0.35;
+    page.pushOperators(pushGraphicsState(), setCharacterSqueeze(squeeze));
+    page.drawText(text, {
+      x: run.x * PT_PER_CSS_PX,
+      y: pageHeightPt - baseline * PT_PER_CSS_PX,
+      size,
+      font,
+      renderMode: TextRenderingMode.Invisible,
+    });
+    page.pushOperators(popGraphicsState());
+  }
+}
+
+// Width at size 1, summed from per-character advances (cached), which is far
+// cheaper than shaping every run and accurate enough for the stretch factor.
+function textWidth(font: PDFFont, text: string, cache: Map<number, number>): number {
+  let width = 0;
+  for (const ch of text) {
+    const code = ch.codePointAt(0) ?? 0;
+    let w = cache.get(code);
+    if (w === undefined) {
+      w = font.widthOfTextAtSize(ch, 1);
+      cache.set(code, w);
+    }
+    width += w;
+  }
+  return width;
+}
+
+// Maps the permission list onto pdf-lib's flags (same as PDF2Note).
+function permissionFlags(allowed: Permission[]): {
+  printing: boolean | 'highResolution';
+  modifying: boolean;
+  copying: boolean;
+  annotating: boolean;
+  fillingForms: boolean;
+} {
+  return {
+    printing: allowed.includes('print') ? 'highResolution' : false,
+    modifying: allowed.includes('modify'),
+    copying: allowed.includes('copy'),
+    annotating: allowed.includes('annot-forms'),
+    fillingForms: allowed.includes('annot-forms'),
+  };
 }
 
 function resolveActiveSourceUri(): vscode.Uri | undefined {

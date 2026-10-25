@@ -66,7 +66,7 @@
   "config.imageFormat.enum.1": "Lossy; typically a quarter of the size or less, fine for text and tables",
   "config.jpegQuality.description": "JPEG quality (10-100) when imageFormat is jpeg.",
   "config.deviceScaleFactor.description": "Rendering scale factor for PDF resolution (1-5). Higher values produce sharper pages.",
-  "config.pdfPassword.description": "Default password for 'Convert Notebook/Markdown to PDF (with Password)'. Leave empty to be prompted each time. The plain convert command never applies it. Stored in plain text in settings; encryption is 40-bit RC4 (jsPDF), which deters casual opening but is not strong protection.",
+  "config.pdfPassword.description": "Default password for 'Convert Notebook/Markdown to PDF (with Password)'. Leave empty to be prompted each time. The plain convert command never applies it. Stored in plain text in settings; the PDF is encrypted with AES-256.",
   "config.pdfPermissions.description": "What a reader who opens an encrypted PDF with the password may do. Default = nb_convert.py's rule: annotations and form filling only (no printing, copying or editing).",
   "config.ownerPassword.description": "Owner password of encrypted PDFs, which unlocks everything pdfPermissions denies. Empty = the same as the PDF password (pdfPassword, or the one typed in the prompt). Note that the limits then do not bind anyone who knows that password.",
   "config.coverPage.description": "Add a cover page before the content.",
