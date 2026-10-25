@@ -48,6 +48,12 @@ body,
 .mdr-content li {
   font-size: 0.9em;
 }
+/* MDR sets letter-spacing: .2px; with any non-zero value html2canvas draws the
+   list marker glyph by glyph and ignores its right alignment, so the bullet
+   lands flush against the text. Zero it on list items (0.2px is invisible). */
+.mdr-content li {
+  letter-spacing: 0;
+}
 
 /* ---- Code cells: pandoc's div.sourceCode > pre, no line numbers ---- */
 .mdr-content .jp-InputArea-editor {
@@ -58,6 +64,9 @@ body,
 }
 .mdr-content .jp-InputArea-editor pre.jp-LineNumbers {
   display: none;
+}
+[data-line-numbers="on"] .mdr-content .jp-InputArea-editor pre.jp-LineNumbers {
+  display: block;
 }
 .mdr-content .jp-InputArea-editor pre {
   font-family: Menlo, Monaco, Consolas, "Courier New", NanumGothic, monospace;
@@ -145,7 +154,10 @@ body,
   font-size: 0.9em;
 }
 
-/* ---- Tables (markdown and DataFrames): full width, first column snug and bold ----
+/* ---- Tables (markdown and DataFrames): full width, first column bold ----
+   Wrapping follows the tableNowrap setting (data-table-nowrap on <html>):
+   'first' keeps nb_convert.py's snug first column, 'all' keeps every cell on
+   one line, 'none' lets everything wrap.
    html2canvas has no border-collapse: it paints every cell's own border, so the
    shared edges of a collapsed grid come out doubled. Emulate the script's 1px
    collapsed grid with separate borders on one side of each cell only. */
@@ -183,9 +195,14 @@ body,
   background-color: var(--bg-block);
   font-weight: bold;
 }
-.mdr-content th:first-child,
-.mdr-content td:first-child {
+[data-table-nowrap="first"] .mdr-content th:first-child,
+[data-table-nowrap="first"] .mdr-content td:first-child {
   width: 1%;
+  white-space: nowrap;
+  word-break: keep-all;
+}
+[data-table-nowrap="all"] .mdr-content th,
+[data-table-nowrap="all"] .mdr-content td {
   white-space: nowrap;
   word-break: keep-all;
 }

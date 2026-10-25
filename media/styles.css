@@ -16,6 +16,46 @@ html, body {
   padding: 0;
   width: var(--capture-width, 1024px);
   box-sizing: border-box;
+  position: relative; /* anchors the optional watermark */
+}
+
+/* ---- Optional chrome driven by settings ---- */
+/* watermarkImage: pinned to the top-right corner of the first page, like nb_convert.py's --ssam mark */
+.jp-Watermark {
+  position: absolute;
+  top: 0;
+  right: 0;
+  z-index: 10;
+}
+/* coverPage: one full content area (--cover-height); .jp-PageBreakAfter ends the page at its bottom */
+.pdf-cover {
+  height: var(--cover-height, 900px);
+  box-sizing: border-box;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+}
+.pdf-cover h1 {
+  font-size: 2.4em;
+  margin: 0 0 0.6em;
+  padding: 0;
+  border: 0;
+}
+.pdf-cover-subtitle {
+  font-size: 1.25em;
+  color: var(--text-muted, #6a737d);
+  margin: 0 0 2em;
+}
+.pdf-cover-author {
+  font-size: 1em;
+  margin: 0;
+}
+/* showLineNumbers: 'off' hides the gutter in every theme ('on' is handled per theme) */
+[data-line-numbers="off"] .jp-InputArea-editor pre.jp-LineNumbers {
+  display: none;
 }
 
 .jp-Notebook {
@@ -44,6 +84,15 @@ html, body {
   font-size: 16px;
   padding: 0;
   box-sizing: border-box;
+}
+/* github-markdown.css adds a clearfix ::before/::after to .markdown-body.
+   html2canvas turns pseudo-elements into real children in its clone, which
+   breaks the :first-child/:last-child margin resets and makes every markdown
+   cell 40 px taller than in the live DOM, so page cuts drift. Not needed here. */
+.markdown-body::before,
+.markdown-body::after {
+  content: none !important;
+  display: none !important;
 }
 
 /* Code cell input — theme-driven via CSS variables */
@@ -168,6 +217,28 @@ html, body {
 .jp-RenderedHTML th {
   background: #f6f8fa;
   font-weight: 600;
+}
+
+/* tableNowrap setting (data-table-nowrap on <html>): 'first' keeps the first
+   column on one line, 'all' every cell, 'none' nothing. */
+[data-table-nowrap="first"] .markdown-body td:first-child,
+[data-table-nowrap="first"] .jp-RenderedHTML td:first-child,
+[data-table-nowrap="all"] .markdown-body th,
+[data-table-nowrap="all"] .markdown-body td,
+[data-table-nowrap="all"] .jp-RenderedHTML th,
+[data-table-nowrap="all"] .jp-RenderedHTML td {
+  white-space: nowrap;
+}
+
+/* Raw HTML boxes in markdown (<div style="padding…">): the heading or
+   paragraph that opens them keeps its document margin on top of the box's own
+   padding, which Jupyter does not show. Drop the outer margins of a box's
+   first and last child, as GitHub does for its alert boxes. */
+.markdown-body div > :first-child {
+  margin-top: 0;
+}
+.markdown-body div > :last-child {
+  margin-bottom: 0;
 }
 
 .jp-RenderedHTML tr:nth-child(even) td {

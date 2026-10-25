@@ -110,6 +110,14 @@
 .markdown-body td:first-child,
 .jp-RenderedHTML td:first-child {
   font-weight: bold !important;
-  white-space: nowrap !important;
   background-color: rgba(240, 240, 240, 0.53) !important;
+}
+/* Wrapping follows the tableNowrap setting (see styles.css). */
+[data-table-nowrap="first"] .markdown-body td:first-child,
+[data-table-nowrap="first"] .jp-RenderedHTML td:first-child,
+[data-table-nowrap="all"] .markdown-body th,
+[data-table-nowrap="all"] .markdown-body td,
+[data-table-nowrap="all"] .jp-RenderedHTML th,
+[data-table-nowrap="all"] .jp-RenderedHTML td {
+  white-space: nowrap !important;
 }

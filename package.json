@@ -1,7 +1,7 @@
 {
   "name": "ipynb-pdf-converter",
   "displayName": "Ipynb PDF Converter",
-  "description": "Convert Jupyter Notebook (.ipynb) and Markdown (.md) files to paginated PDF documents on standard paper sizes (A4, A3, B5, …) with light/dark page themes and optional password protection.",
+  "description": "%description%",
   "version": "0.7.1",
   "publisher": "leekh",
   "icon": "media/icon.png",
@@ -25,12 +25,32 @@
     "commands": [
       {
         "command": "ipynb-pdf-converter.convertToPdf",
-        "title": "Convert Notebook/Markdown to PDF",
+        "title": "%cmd.convertToPdf.title%",
         "category": "Jupyter"
       },
       {
         "command": "ipynb-pdf-converter.convertToPdfWithPassword",
-        "title": "Convert Notebook/Markdown to PDF (with Password)",
+        "title": "%cmd.convertToPdfWithPassword.title%",
+        "category": "Jupyter"
+      },
+      {
+        "command": "ipynb-pdf-converter.convertToPdfHossam",
+        "title": "%cmd.convertToPdfHossam.title%",
+        "category": "Jupyter"
+      },
+      {
+        "command": "ipynb-pdf-converter.convertToPdfHossamWithPassword",
+        "title": "%cmd.convertToPdfHossamWithPassword.title%",
+        "category": "Jupyter"
+      },
+      {
+        "command": "ipynb-pdf-converter.convertToPdfJussam",
+        "title": "%cmd.convertToPdfJussam.title%",
+        "category": "Jupyter"
+      },
+      {
+        "command": "ipynb-pdf-converter.convertToPdfJussamWithPassword",
+        "title": "%cmd.convertToPdfJussamWithPassword.title%",
         "category": "Jupyter"
       }
     ],
@@ -45,6 +65,26 @@
           "command": "ipynb-pdf-converter.convertToPdfWithPassword",
           "when": "resourceExtname == .ipynb || resourceExtname == .md",
           "group": "navigation@99"
+        },
+        {
+          "command": "ipynb-pdf-converter.convertToPdfHossam",
+          "when": "(resourceExtname == .ipynb || resourceExtname == .md) && config.ipynb-pdf-converter.teacherMode",
+          "group": "navigation@100"
+        },
+        {
+          "command": "ipynb-pdf-converter.convertToPdfHossamWithPassword",
+          "when": "(resourceExtname == .ipynb || resourceExtname == .md) && config.ipynb-pdf-converter.teacherMode",
+          "group": "navigation@101"
+        },
+        {
+          "command": "ipynb-pdf-converter.convertToPdfJussam",
+          "when": "(resourceExtname == .ipynb || resourceExtname == .md) && config.ipynb-pdf-converter.teacherMode",
+          "group": "navigation@102"
+        },
+        {
+          "command": "ipynb-pdf-converter.convertToPdfJussamWithPassword",
+          "when": "(resourceExtname == .ipynb || resourceExtname == .md) && config.ipynb-pdf-converter.teacherMode",
+          "group": "navigation@103"
         }
       ],
       "editor/title/context": [
@@ -57,6 +97,90 @@
           "command": "ipynb-pdf-converter.convertToPdfWithPassword",
           "when": "resourceExtname == .ipynb || resourceExtname == .md",
           "group": "navigation@99"
+        },
+        {
+          "command": "ipynb-pdf-converter.convertToPdfHossam",
+          "when": "(resourceExtname == .ipynb || resourceExtname == .md) && config.ipynb-pdf-converter.teacherMode",
+          "group": "navigation@100"
+        },
+        {
+          "command": "ipynb-pdf-converter.convertToPdfHossamWithPassword",
+          "when": "(resourceExtname == .ipynb || resourceExtname == .md) && config.ipynb-pdf-converter.teacherMode",
+          "group": "navigation@101"
+        },
+        {
+          "command": "ipynb-pdf-converter.convertToPdfJussam",
+          "when": "(resourceExtname == .ipynb || resourceExtname == .md) && config.ipynb-pdf-converter.teacherMode",
+          "group": "navigation@102"
+        },
+        {
+          "command": "ipynb-pdf-converter.convertToPdfJussamWithPassword",
+          "when": "(resourceExtname == .ipynb || resourceExtname == .md) && config.ipynb-pdf-converter.teacherMode",
+          "group": "navigation@103"
+        }
+      ],
+      "editor/context": [
+        {
+          "command": "ipynb-pdf-converter.convertToPdf",
+          "when": "resourceExtname == .ipynb || resourceExtname == .md",
+          "group": "navigation@98"
+        },
+        {
+          "command": "ipynb-pdf-converter.convertToPdfWithPassword",
+          "when": "resourceExtname == .ipynb || resourceExtname == .md",
+          "group": "navigation@99"
+        },
+        {
+          "command": "ipynb-pdf-converter.convertToPdfHossam",
+          "when": "(resourceExtname == .ipynb || resourceExtname == .md) && config.ipynb-pdf-converter.teacherMode",
+          "group": "navigation@100"
+        },
+        {
+          "command": "ipynb-pdf-converter.convertToPdfHossamWithPassword",
+          "when": "(resourceExtname == .ipynb || resourceExtname == .md) && config.ipynb-pdf-converter.teacherMode",
+          "group": "navigation@101"
+        },
+        {
+          "command": "ipynb-pdf-converter.convertToPdfJussam",
+          "when": "(resourceExtname == .ipynb || resourceExtname == .md) && config.ipynb-pdf-converter.teacherMode",
+          "group": "navigation@102"
+        },
+        {
+          "command": "ipynb-pdf-converter.convertToPdfJussamWithPassword",
+          "when": "(resourceExtname == .ipynb || resourceExtname == .md) && config.ipynb-pdf-converter.teacherMode",
+          "group": "navigation@103"
+        }
+      ],
+      "notebook/cell/title": [
+        {
+          "command": "ipynb-pdf-converter.convertToPdf",
+          "when": "notebookType == jupyter-notebook",
+          "group": "z_convert@98"
+        },
+        {
+          "command": "ipynb-pdf-converter.convertToPdfWithPassword",
+          "when": "notebookType == jupyter-notebook",
+          "group": "z_convert@99"
+        },
+        {
+          "command": "ipynb-pdf-converter.convertToPdfHossam",
+          "when": "notebookType == jupyter-notebook && config.ipynb-pdf-converter.teacherMode",
+          "group": "z_convert@100"
+        },
+        {
+          "command": "ipynb-pdf-converter.convertToPdfHossamWithPassword",
+          "when": "notebookType == jupyter-notebook && config.ipynb-pdf-converter.teacherMode",
+          "group": "z_convert@101"
+        },
+        {
+          "command": "ipynb-pdf-converter.convertToPdfJussam",
+          "when": "notebookType == jupyter-notebook && config.ipynb-pdf-converter.teacherMode",
+          "group": "z_convert@102"
+        },
+        {
+          "command": "ipynb-pdf-converter.convertToPdfJussamWithPassword",
+          "when": "notebookType == jupyter-notebook && config.ipynb-pdf-converter.teacherMode",
+          "group": "z_convert@103"
         }
       ],
       "commandPalette": [
@@ -67,60 +191,28 @@
         {
           "command": "ipynb-pdf-converter.convertToPdfWithPassword",
           "when": "resourceExtname == .ipynb || resourceExtname == .md || activeEditor == 'workbench.editor.notebook'"
+        },
+        {
+          "command": "ipynb-pdf-converter.convertToPdfHossam",
+          "when": "(resourceExtname == .ipynb || resourceExtname == .md || activeEditor == 'workbench.editor.notebook') && config.ipynb-pdf-converter.teacherMode"
+        },
+        {
+          "command": "ipynb-pdf-converter.convertToPdfHossamWithPassword",
+          "when": "(resourceExtname == .ipynb || resourceExtname == .md || activeEditor == 'workbench.editor.notebook') && config.ipynb-pdf-converter.teacherMode"
+        },
+        {
+          "command": "ipynb-pdf-converter.convertToPdfJussam",
+          "when": "(resourceExtname == .ipynb || resourceExtname == .md || activeEditor == 'workbench.editor.notebook') && config.ipynb-pdf-converter.teacherMode"
+        },
+        {
+          "command": "ipynb-pdf-converter.convertToPdfJussamWithPassword",
+          "when": "(resourceExtname == .ipynb || resourceExtname == .md || activeEditor == 'workbench.editor.notebook') && config.ipynb-pdf-converter.teacherMode"
         }
       ]
     },
     "configuration": {
-      "title": "Ipynb PDF Converter",
+      "title": "%config.title%",
       "properties": {
-        "ipynb-pdf-converter.deviceScaleFactor": {
-          "type": "number",
-          "default": 3,
-          "minimum": 1,
-          "maximum": 5,
-          "description": "Rendering scale factor for PDF resolution (1-5). Higher values produce sharper pages."
-        },
-        "ipynb-pdf-converter.pdfPageSize": {
-          "type": "string",
-          "default": "A4",
-          "enum": [
-            "A3",
-            "A4",
-            "A5",
-            "B4",
-            "B5",
-            "Letter",
-            "Legal",
-            "Widescreen"
-          ],
-          "enumDescriptions": [
-            "A3 (297 × 420 mm)",
-            "A4 (210 × 297 mm)",
-            "A5 (148 × 210 mm)",
-            "B4 (JIS, 257 × 364 mm)",
-            "B5 (JIS, 182 × 257 mm)",
-            "Letter (8.5 × 11 in)",
-            "Legal (8.5 × 14 in)",
-            "Widescreen 16:9 slide (13.333 × 7.5 in, nb_convert.py horizontal mode; use with landscape orientation)"
-          ],
-          "description": "Paper size of each PDF page. Content is laid out at 96 dpi (A4 portrait ≈ 794 × 1123 CSS px) and split across pages."
-        },
-        "ipynb-pdf-converter.pdfPageOrientation": {
-          "type": "string",
-          "default": "portrait",
-          "enum": [
-            "portrait",
-            "landscape"
-          ],
-          "description": "Page orientation."
-        },
-        "ipynb-pdf-converter.pdfPageMargin": {
-          "type": "number",
-          "default": 48,
-          "minimum": 0,
-          "maximum": 200,
-          "description": "Page margin on all four sides, in CSS pixels (48 px = 0.5 in, nb_convert.py's @page margin). The Markdown Reader page themes add the script's 30 px body margin inside it: on both sides of every page, and above/below the document on the first/last page."
-        },
         "ipynb-pdf-converter.pdfTheme": {
           "type": "string",
           "default": "light",
@@ -130,11 +222,11 @@
             "dark"
           ],
           "enumDescriptions": [
-            "Default: GitHub document style (github-markdown.css)",
-            "Light: Markdown Reader light palette (nb_convert.py --theme light)",
-            "Dark: Markdown Reader dark palette (nb_convert.py --theme dark)"
+            "%config.pdfTheme.enum.0%",
+            "%config.pdfTheme.enum.1%",
+            "%config.pdfTheme.enum.2%"
           ],
-          "description": "Overall page theme (paper, text, headings, tables, outputs), ported from nb_convert.py. Code cells always use 'codeTheme'. The 'leekh' chrome (emoji headings) applies only with 'default'."
+          "description": "%config.pdfTheme.description%"
         },
         "ipynb-pdf-converter.codeTheme": {
           "type": "string",
@@ -153,24 +245,303 @@
             "leekh"
           ],
           "enumDescriptions": [
-            "Markdown Reader Dark (nb_convert.py --code-theme dark)",
-            "Markdown Reader Light (nb_convert.py --code-theme light)",
-            "Dracula",
-            "GitHub Light",
-            "GitHub Dark",
-            "Atom One Light",
-            "Atom One Dark",
-            "Monokai",
-            "Nord",
-            "Visual Studio Dark",
-            "Leekh (vertical/A4 print style: emoji headings, colored sections, accented outputs)"
+            "%config.codeTheme.enum.0%",
+            "%config.codeTheme.enum.1%",
+            "%config.codeTheme.enum.2%",
+            "%config.codeTheme.enum.3%",
+            "%config.codeTheme.enum.4%",
+            "%config.codeTheme.enum.5%",
+            "%config.codeTheme.enum.6%",
+            "%config.codeTheme.enum.7%",
+            "%config.codeTheme.enum.8%",
+            "%config.codeTheme.enum.9%",
+            "%config.codeTheme.enum.10%"
           ],
-          "description": "Syntax highlighting theme for source code cells. 'leekh' also restyles headings, tables, and outputs to match the A4 print layout when pdfTheme is 'default'."
+          "description": "%config.codeTheme.description%"
+        },
+        "ipynb-pdf-converter.pdfPageSize": {
+          "type": "string",
+          "default": "A4",
+          "enum": [
+            "A3",
+            "A4",
+            "A5",
+            "B4",
+            "B5",
+            "Letter",
+            "Legal",
+            "Widescreen"
+          ],
+          "enumDescriptions": [
+            "%config.pdfPageSize.enum.0%",
+            "%config.pdfPageSize.enum.1%",
+            "%config.pdfPageSize.enum.2%",
+            "%config.pdfPageSize.enum.3%",
+            "%config.pdfPageSize.enum.4%",
+            "%config.pdfPageSize.enum.5%",
+            "%config.pdfPageSize.enum.6%",
+            "%config.pdfPageSize.enum.7%"
+          ],
+          "description": "%config.pdfPageSize.description%"
+        },
+        "ipynb-pdf-converter.pdfPageOrientation": {
+          "type": "string",
+          "default": "portrait",
+          "enum": [
+            "portrait",
+            "landscape"
+          ],
+          "description": "%config.pdfPageOrientation.description%"
+        },
+        "ipynb-pdf-converter.pdfPageMargin": {
+          "type": "number",
+          "default": 48,
+          "minimum": 0,
+          "maximum": 200,
+          "description": "%config.pdfPageMargin.description%"
+        },
+        "ipynb-pdf-converter.outputDirectory": {
+          "type": "string",
+          "default": "",
+          "description": "%config.outputDirectory.description%"
+        },
+        "ipynb-pdf-converter.outputFileName": {
+          "type": "string",
+          "default": "{name}",
+          "description": "%config.outputFileName.description%"
+        },
+        "ipynb-pdf-converter.openAfterConvert": {
+          "type": "boolean",
+          "default": false,
+          "description": "%config.openAfterConvert.description%"
+        },
+        "ipynb-pdf-converter.headerText": {
+          "type": "string",
+          "default": "{file}",
+          "description": "%config.headerText.description%"
+        },
+        "ipynb-pdf-converter.footerText": {
+          "type": "string",
+          "default": "{page} / {total}",
+          "description": "%config.footerText.description%"
+        },
+        "ipynb-pdf-converter.headerAlign": {
+          "type": "string",
+          "default": "right",
+          "enum": [
+            "left",
+            "center",
+            "right"
+          ],
+          "description": "%config.headerAlign.description%"
+        },
+        "ipynb-pdf-converter.footerAlign": {
+          "type": "string",
+          "default": "right",
+          "enum": [
+            "left",
+            "center",
+            "right"
+          ],
+          "description": "%config.footerAlign.description%"
+        },
+        "ipynb-pdf-converter.headerFooterFontSize": {
+          "type": "number",
+          "default": 10,
+          "minimum": 6,
+          "maximum": 24,
+          "description": "%config.headerFooterFontSize.description%"
+        },
+        "ipynb-pdf-converter.pageBreakBefore": {
+          "type": "string",
+          "default": "h1",
+          "enum": [
+            "h1",
+            "h1-h2",
+            "none"
+          ],
+          "enumDescriptions": [
+            "%config.pageBreakBefore.enum.0%",
+            "%config.pageBreakBefore.enum.1%",
+            "%config.pageBreakBefore.enum.2%"
+          ],
+          "description": "%config.pageBreakBefore.description%"
+        },
+        "ipynb-pdf-converter.breakBeforeTags": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "default": [],
+          "description": "%config.breakBeforeTags.description%"
+        },
+        "ipynb-pdf-converter.hideCodeCells": {
+          "type": "boolean",
+          "default": false,
+          "description": "%config.hideCodeCells.description%"
+        },
+        "ipynb-pdf-converter.hideOutputs": {
+          "type": "boolean",
+          "default": false,
+          "description": "%config.hideOutputs.description%"
+        },
+        "ipynb-pdf-converter.excludeCellTags": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "default": [],
+          "description": "%config.excludeCellTags.description%"
+        },
+        "ipynb-pdf-converter.tableNowrap": {
+          "type": "string",
+          "default": "first",
+          "enum": [
+            "first",
+            "all",
+            "none"
+          ],
+          "enumDescriptions": [
+            "%config.tableNowrap.enum.0%",
+            "%config.tableNowrap.enum.1%",
+            "%config.tableNowrap.enum.2%"
+          ],
+          "description": "%config.tableNowrap.description%"
+        },
+        "ipynb-pdf-converter.showLineNumbers": {
+          "type": "string",
+          "default": "auto",
+          "enum": [
+            "auto",
+            "on",
+            "off"
+          ],
+          "enumDescriptions": [
+            "%config.showLineNumbers.enum.0%",
+            "%config.showLineNumbers.enum.1%",
+            "%config.showLineNumbers.enum.2%"
+          ],
+          "description": "%config.showLineNumbers.description%"
+        },
+        "ipynb-pdf-converter.baseFontSize": {
+          "type": "number",
+          "default": 16,
+          "minimum": 8,
+          "maximum": 32,
+          "description": "%config.baseFontSize.description%"
+        },
+        "ipynb-pdf-converter.bodyFontFamily": {
+          "type": "string",
+          "default": "",
+          "description": "%config.bodyFontFamily.description%"
+        },
+        "ipynb-pdf-converter.codeFontFamily": {
+          "type": "string",
+          "default": "",
+          "description": "%config.codeFontFamily.description%"
+        },
+        "ipynb-pdf-converter.imageFormat": {
+          "type": "string",
+          "default": "png",
+          "enum": [
+            "png",
+            "jpeg"
+          ],
+          "enumDescriptions": [
+            "%config.imageFormat.enum.0%",
+            "%config.imageFormat.enum.1%"
+          ],
+          "description": "%config.imageFormat.description%"
+        },
+        "ipynb-pdf-converter.jpegQuality": {
+          "type": "number",
+          "default": 85,
+          "minimum": 10,
+          "maximum": 100,
+          "description": "%config.jpegQuality.description%"
+        },
+        "ipynb-pdf-converter.deviceScaleFactor": {
+          "type": "number",
+          "default": 3,
+          "minimum": 1,
+          "maximum": 5,
+          "description": "%config.deviceScaleFactor.description%"
         },
         "ipynb-pdf-converter.pdfPassword": {
           "type": "string",
           "default": "",
-          "description": "Default password for 'Convert Notebook/Markdown to PDF (with Password)'. Leave empty to be prompted each time. The plain convert command never applies it. Stored in plain text in settings; encryption is 40-bit RC4 (jsPDF), which deters casual opening but is not strong protection."
+          "description": "%config.pdfPassword.description%"
+        },
+        "ipynb-pdf-converter.pdfPermissions": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": [
+              "print",
+              "copy",
+              "modify",
+              "annot-forms"
+            ]
+          },
+          "uniqueItems": true,
+          "default": [
+            "annot-forms"
+          ],
+          "description": "%config.pdfPermissions.description%"
+        },
+        "ipynb-pdf-converter.ownerPassword": {
+          "type": "string",
+          "default": "",
+          "description": "%config.ownerPassword.description%"
+        },
+        "ipynb-pdf-converter.coverPage": {
+          "type": "boolean",
+          "default": false,
+          "description": "%config.coverPage.description%"
+        },
+        "ipynb-pdf-converter.coverTitle": {
+          "type": "string",
+          "default": "{file}",
+          "description": "%config.coverTitle.description%"
+        },
+        "ipynb-pdf-converter.coverSubtitle": {
+          "type": "string",
+          "default": "",
+          "description": "%config.coverSubtitle.description%"
+        },
+        "ipynb-pdf-converter.coverAuthor": {
+          "type": "string",
+          "default": "",
+          "description": "%config.coverAuthor.description%"
+        },
+        "ipynb-pdf-converter.watermarkImage": {
+          "type": "string",
+          "default": "",
+          "description": "%config.watermarkImage.description%"
+        },
+        "ipynb-pdf-converter.watermarkWidth": {
+          "type": "number",
+          "default": 100,
+          "minimum": 10,
+          "maximum": 2000,
+          "description": "%config.watermarkWidth.description%"
+        },
+        "ipynb-pdf-converter.allowRemoteImages": {
+          "type": "boolean",
+          "default": true,
+          "description": "%config.allowRemoteImages.description%"
+        },
+        "ipynb-pdf-converter.renderTimeoutSeconds": {
+          "type": "number",
+          "default": 60,
+          "minimum": 10,
+          "maximum": 600,
+          "description": "%config.renderTimeoutSeconds.description%"
+        },
+        "ipynb-pdf-converter.teacherMode": {
+          "type": "boolean",
+          "default": false,
+          "description": "%config.teacherMode.description%"
         }
       }
     }

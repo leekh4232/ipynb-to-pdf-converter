@@ -5,6 +5,32 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.8.0] - 2026-10-25
+
+### Added
+- **Settings reorganised by importance** and 27 new ones:
+  - Output file: `outputDirectory`, `outputFileName` (`{name}`, `{date}`), `openAfterConvert`.
+  - Header/footer: `headerText`, `footerText` (`{file}`, `{date}`, `{page}`, `{total}`; empty = none), `headerAlign`, `footerAlign`, `headerFooterFontSize`.
+  - Page breaks: `pageBreakBefore` (`h1` | `h1-h2` | `none`), `breakBeforeTags`.
+  - Content selection: `hideCodeCells`, `hideOutputs`, `excludeCellTags`.
+  - Look: `tableNowrap` (`first` | `all` | `none`), `showLineNumbers` (`auto` | `on` | `off`), `baseFontSize`, `bodyFontFamily`, `codeFontFamily`.
+  - Size: `imageFormat` (`png` | `jpeg`), `jpegQuality`.
+  - Security: `pdfPermissions` (print/copy/modify/annot-forms), `ownerPassword`.
+  - Cover and watermark: `coverPage`, `coverTitle`, `coverSubtitle`, `coverAuthor`, `watermarkImage`, `watermarkWidth`.
+  - Advanced: `allowRemoteImages`, `renderTimeoutSeconds`.
+- The Output panel no longer opens on every conversion; the error notification and the "images not embedded" warning offer a *Show Log* button instead.
+- **Progress notification** with a progress bar, stage messages (rendering, capturing chunk n/m, assembling, saving) and a Cancel button; closing the conversion view cancels too.
+- **No more overwriting**: when the target PDF exists the file is saved as `name (1).pdf`, `name (2).pdf`, …
+- **Korean UI strings**: command titles and every setting description are localised via `package.nls.json` (English) and `package.nls.ko.json`; VS Code picks the one matching its display language.
+- **Context menus in the editor body and in notebook cells** (`editor/context`, `notebook/cell/title`) carry the same conversion commands as the explorer and tab menus.
+- **Teacher mode** (`teacherMode`, last setting): adds `(hossam)` / `(jussam)` conversion commands, each with and without password, to the context menus and palette. They draw the instructor mark (`itwill-ho.png` / `itwill-ju.png`, 100 px wide) at the top right of every page in place of `headerText`, like `nb_convert.py --ssam`.
+
+### Fixed
+- **Long notebooks came out blank (header and footer only) at the default scale 3**: the single capture canvas exceeded Chromium's 32,767 px height limit after about ten pages and html2canvas silently returned an empty image. The document is now captured in page-aligned chunks of at most 16,000 px.
+- **Page cuts drifting in the `default` page theme**: html2canvas materialises github-markdown.css's clearfix pseudo-elements, which made every markdown cell 40 px taller in the capture than in the layout the paginator measured. The pseudo-elements are now disabled.
+- **List bullets touching the text in the Markdown Reader themes** (`•이 함수는`): html2canvas mis-places the marker whenever `letter-spacing` is non-zero, so list items now use 0 instead of MDR's 0.2 px.
+- **Oversized top gap inside raw HTML boxes in markdown** (e.g. `<div style="padding…">` feedback notes): the heading opening the box kept its 35 px document margin on top of the box padding. The first/last child of such a box now drops its outer margin, matching the notebook view.
+
 ## [0.7.1] - 2026-10-23
 
 ### Added

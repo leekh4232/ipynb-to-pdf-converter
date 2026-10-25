@@ -26,14 +26,36 @@ const ANSI_BRIGHT = ['#7f7f7f', '#ff0000', '#00ff00', '#ffff00', '#5c5cff', '#ff
 
 const RICH_MIME = ['image/png', 'image/jpeg', 'image/svg+xml', 'text/html', 'text/markdown'];
 
-export function renderNotebook(nb: Notebook): string {
+export interface RenderOptions {
+  hideCodeCells?: boolean;
+  hideOutputs?: boolean;
+  // Cells carrying any of these metadata tags are left out entirely.
+  excludeCellTags?: string[];
+  // Cells carrying any of these tags start a new page (.jp-PageBreakBefore).
+  breakBeforeTags?: string[];
+}
+
+export function renderNotebook(nb: Notebook, options: RenderOptions = {}): string {
   const language =
     nb.metadata?.language_info?.name ??
     nb.metadata?.kernelspec?.language ??
     'python';
 
-  const cellsHtml = nb.cells.map((cell) => renderCell(cell, language)).join('\n');
+  const cellsHtml = nb.cells
+    .filter((cell) => !hasAnyTag(cell, options.excludeCellTags))
+    .map((cell) =>
+      renderCell(cell, language, options, hasAnyTag(cell, options.breakBeforeTags) ? ' jp-PageBreakBefore' : '')
+    )
+    .join('\n');
   return `<div class="jp-Notebook">\n${cellsHtml}\n</div>`;
+}
+
+function hasAnyTag(cell: Cell, tags: string[] | undefined): boolean {
+  if (!tags || tags.length === 0) {
+    return false;
+  }
+  const cellTags = cell.metadata?.tags;
+  return Array.isArray(cellTags) && cellTags.some((tag) => tags.includes(String(tag)));
 }
 
 // Renders a standalone Markdown document, reusing the same notebook chrome so it
@@ -43,29 +65,29 @@ export function renderMarkdown(source: string): string {
   return `<div class="jp-Notebook">\n${cell}\n</div>`;
 }
 
-function markdownCellHtml(html: string): string {
-  return `<div class="jp-Cell jp-MarkdownCell"><div class="jp-Cell-inputWrapper"><div class="markdown-body">${html}</div></div></div>`;
+function markdownCellHtml(html: string, cls = ''): string {
+  return `<div class="jp-Cell jp-MarkdownCell${cls}"><div class="jp-Cell-inputWrapper"><div class="markdown-body">${html}</div></div></div>`;
 }
 
-function renderCell(cell: Cell, language: string): string {
+function renderCell(cell: Cell, language: string, options: RenderOptions, cls: string): string {
   switch (cell.cell_type) {
     case 'markdown':
-      return renderMarkdownCell(cell);
+      return renderMarkdownCell(cell, cls);
     case 'code':
-      return renderCodeCell(cell, language);
+      return renderCodeCell(cell, language, options, cls);
     case 'raw':
-      return renderRawCell(cell);
+      return renderRawCell(cell, cls);
     default:
       return '';
   }
 }
 
-function renderMarkdownCell(cell: MarkdownCell): string {
+function renderMarkdownCell(cell: MarkdownCell, cls: string): string {
   let html = marked.parse(joinSource(cell.source)) as string;
   if (cell.attachments) {
     html = resolveAttachments(html, cell.attachments);
   }
-  return markdownCellHtml(html);
+  return markdownCellHtml(html, cls);
 }
 
 // ![x](attachment:name) refers to an image stored base64-encoded in the cell.
@@ -90,28 +112,34 @@ function resolveAttachments(html: string, attachments: Record<string, MimeBundle
   );
 }
 
-function renderRawCell(cell: RawCell): string {
-  return `<div class="jp-Cell jp-RawCell"><pre class="jp-RenderedText">${escapeHtml(joinSource(cell.source))}</pre></div>`;
+function renderRawCell(cell: RawCell, cls: string): string {
+  return `<div class="jp-Cell jp-RawCell${cls}"><pre class="jp-RenderedText">${escapeHtml(joinSource(cell.source))}</pre></div>`;
 }
 
-function renderCodeCell(cell: CodeCell, language: string): string {
+function renderCodeCell(cell: CodeCell, language: string, options: RenderOptions, cls: string): string {
   const source = joinSource(cell.source).replace(/\n$/, '');
   const highlighted = highlightCode(source, language);
   const lineCount = source.split('\n').length;
   const lineNumbers = Array.from({ length: lineCount }, (_, i) => i + 1).join('\n');
 
-  const outputs = renderOutputs(cell.outputs ?? []);
-  const outputsBlock = outputs
-    ? `<div class="jp-Cell-outputWrapper">${outputs}</div>`
-    : '';
-
-  return `<div class="jp-Cell jp-CodeCell">
-  <div class="jp-Cell-inputWrapper">
+  const inputBlock = options.hideCodeCells
+    ? ''
+    : `<div class="jp-Cell-inputWrapper">
     <div class="jp-InputArea-editor">
       <pre class="jp-LineNumbers">${lineNumbers}</pre>
       <pre class="hljs"><code>${highlighted}</code></pre>
     </div>
-  </div>
+  </div>`;
+  const outputs = options.hideOutputs ? '' : renderOutputs(cell.outputs ?? []);
+  const outputsBlock = outputs
+    ? `<div class="jp-Cell-outputWrapper">${outputs}</div>`
+    : '';
+  if (!inputBlock && !outputsBlock) {
+    return '';
+  }
+
+  return `<div class="jp-Cell jp-CodeCell${cls}">
+  ${inputBlock}
   ${outputsBlock}
 </div>`;
 }

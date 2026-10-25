@@ -25,7 +25,16 @@ export interface InlineResult {
   failures: string[];
 }
 
-export async function inlineImages(html: string, baseDir: string): Promise<InlineResult> {
+export interface InlineOptions {
+  // false leaves http(s) images out and reports them (allowRemoteImages).
+  allowRemote?: boolean;
+}
+
+export async function inlineImages(
+  html: string,
+  baseDir: string,
+  options: InlineOptions = {}
+): Promise<InlineResult> {
   const failures: string[] = [];
   const matches = [...html.matchAll(IMG_SRC)];
   const dataUrls = await Promise.all(
@@ -35,6 +44,9 @@ export async function inlineImages(html: string, baseDir: string): Promise<Inlin
         return undefined;
       }
       try {
+        if (/^https?:/i.test(src) && options.allowRemote === false) {
+          throw new Error('remote images are disabled (allowRemoteImages)');
+        }
         return await loadAsDataUrl(src, baseDir);
       } catch (error) {
         failures.push(`${src} (${error instanceof Error ? error.message : String(error)})`);
@@ -50,7 +62,9 @@ export async function inlineImages(html: string, baseDir: string): Promise<Inlin
   return { html: out, failures };
 }
 
-async function loadAsDataUrl(src: string, baseDir: string): Promise<string> {
+// Loads one image (path, file: or http(s) URL) as a data: URL; throws when it
+// cannot be read or is not an image.
+export async function loadAsDataUrl(src: string, baseDir: string): Promise<string> {
   const bare = src.split(/[?#]/)[0];
   let bytes: Buffer;
   let mime: string | undefined;
