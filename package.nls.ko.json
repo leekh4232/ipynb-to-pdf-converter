@@ -23,7 +23,7 @@
   "config.codeTheme.enum.8": "Nord",
   "config.codeTheme.enum.9": "Visual Studio Dark",
   "config.codeTheme.enum.10": "Leekh (세로/A4 인쇄 스타일: 이모지 제목, 색상 구역, 강조 출력)",
-  "config.pdfPageSize.description": "각 PDF 페이지의 용지 크기. 본문은 96 dpi 기준(A4 세로 ≈ 794 × 1123 CSS px)으로 배치하고 페이지로 나눕니다.",
+  "config.pdfPageSize.description": "각 PDF 페이지의 용지 크기. 본문은 96 dpi 기준(A4 세로 ≈ 794 × 1123 CSS px)으로 배치하고 페이지로 나눕니다. 태블릿 항목은 그 기기의 화면 논리 크기(CSS px)라 100%에서 화면에 꽉 찹니다.",
   "config.pdfPageSize.enum.0": "A3 (297 × 420 mm)",
   "config.pdfPageSize.enum.1": "A4 (210 × 297 mm)",
   "config.pdfPageSize.enum.2": "A5 (148 × 210 mm)",
@@ -42,7 +42,7 @@
   "config.headerAlign.description": "머릿말의 가로 위치.",
   "config.footerAlign.description": "꼬릿말의 가로 위치.",
   "config.headerFooterFontSize.description": "머릿말/꼬릿말 글자 크기 (CSS px, 10 px ≈ 7.5 pt). 페이지 여백이 이 값의 2배보다 작으면 그리지 않습니다.",
-  "config.pageBreakBefore.description": "새 페이지를 시작하는 제목. 문서 맨 위에 있는 제목은 빈 페이지를 만들지 않습니다. 글줄·표 행·그림 중간에서는 어떤 경우에도 자르지 않습니다.",
+  "config.pageBreakBefore.description": "새 페이지를 시작하는 제목 (기본값 none: 제목 앞에서 나누지 않음). 문서 맨 위에 있는 제목은 빈 페이지를 만들지 않습니다. 글줄·표 행·그림 중간에서는 어떤 경우에도 자르지 않습니다.",
   "config.pageBreakBefore.enum.0": "모든 h1 제목 앞 (nb_convert.py 규칙)",
   "config.pageBreakBefore.enum.1": "모든 h1·h2 제목 앞",
   "config.pageBreakBefore.enum.2": "breakBeforeTags에 지정한 태그가 달린 셀 앞에서만",
@@ -77,5 +77,12 @@
   "config.watermarkWidth.description": "워터마크 폭 (CSS px).",
   "config.allowRemoteImages.description": "문서가 참조하는 http(s) 이미지를 내려받습니다 (각 15초 제한). 끄면 빼고 출력 채널에 목록을 남깁니다.",
   "config.renderTimeoutSeconds.description": "웹뷰가 문서를 렌더링·캡처할 수 있는 최대 시간. 아주 긴 노트북이면 올리세요.",
-  "config.teacherMode.description": "우클릭 메뉴와 명령 팔레트에 hossam / jussam 변환 명령(각각 비밀번호 유무)을 추가합니다. 이 모드는 nb_convert.py의 --ssam처럼 강사 마크(https://data.hossam.kr/itwill-ho.png 또는 itwill-ju.png, 폭 100 px)를 모든 페이지 우측 상단에 headerText 대신 그립니다."
+  "config.teacherMode.description": "우클릭 메뉴와 명령 팔레트에 hossam / jussam 변환 명령(각각 비밀번호 유무)을 추가합니다. 이 모드는 nb_convert.py의 --ssam처럼 강사 마크(https://data.hossam.kr/itwill-ho.png 또는 itwill-ju.png, 폭 100 px)를 모든 페이지 우측 상단에 headerText 대신 그립니다.",
+  "config.pdfPageSize.enum.8": "iPad Pro 13\" (M4/M5, 패널 2752 × 2064 px)",
+  "config.pdfPageSize.enum.9": "iPad Pro 11\" (M4/M5, 패널 2420 × 1668 px)",
+  "config.pdfPageSize.enum.10": "iPad Air 13\" (M2/M3, 패널 2732 × 2048 px)",
+  "config.pdfPageSize.enum.11": "iPad / iPad Air 11\" (패널 2360 × 1640 px, 두 기종 동일)",
+  "config.pdfPageSize.enum.12": "iPad mini (A17 Pro, 패널 2266 × 1488 px)",
+  "config.pdfPageSize.enum.13": "Galaxy Tab S11 11\" (패널 2560 × 1600 px, S12 11\"도 동일 예상)",
+  "config.pdfPageSize.enum.14": "Galaxy Tab S11 Ultra / S12 Ultra 14.6\" (패널 2960 × 1848 px, 두 기종 동일)"
 }

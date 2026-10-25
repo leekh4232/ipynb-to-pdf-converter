@@ -7,8 +7,9 @@
   "icon": "media/icon.png",
   "repository": {
     "type": "git",
-    "url": "https://github.com/leekh4232/ipynb-to-png-converter"
+    "url": "https://github.com/leekh4232/ipynb-to-pdf-converter"
   },
+  "homepage": "https://leekh4232.github.io/ipynb-to-pdf-converter/",
   "author": {
     "name": "이광호",
     "email": "leekh4232@gmail.com"
@@ -270,7 +271,14 @@
             "B5",
             "Letter",
             "Legal",
-            "Widescreen"
+            "Widescreen",
+            "iPadPro13",
+            "iPadPro11",
+            "iPadAir13",
+            "iPad11",
+            "iPadMini",
+            "GalaxyTabS11",
+            "GalaxyTabS11Ultra"
           ],
           "enumDescriptions": [
             "%config.pdfPageSize.enum.0%",
@@ -280,7 +288,14 @@
             "%config.pdfPageSize.enum.4%",
             "%config.pdfPageSize.enum.5%",
             "%config.pdfPageSize.enum.6%",
-            "%config.pdfPageSize.enum.7%"
+            "%config.pdfPageSize.enum.7%",
+            "%config.pdfPageSize.enum.8%",
+            "%config.pdfPageSize.enum.9%",
+            "%config.pdfPageSize.enum.10%",
+            "%config.pdfPageSize.enum.11%",
+            "%config.pdfPageSize.enum.12%",
+            "%config.pdfPageSize.enum.13%",
+            "%config.pdfPageSize.enum.14%"
           ],
           "description": "%config.pdfPageSize.description%"
         },
@@ -354,7 +369,7 @@
         },
         "ipynb-pdf-converter.pageBreakBefore": {
           "type": "string",
-          "default": "h1",
+          "default": "none",
           "enum": [
             "h1",
             "h1-h2",

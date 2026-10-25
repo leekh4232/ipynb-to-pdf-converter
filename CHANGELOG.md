@@ -5,6 +5,19 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Added
+- **Extension API** `convertToPdfBytes` (exports of `activate`) for other extensions such as PDF2Note: same pipeline, returns the PDF bytes.
+
+- **Tablet page sizes** in `pdfPageSize`: iPad Pro 13"/11", iPad Air 13", iPad / iPad Air 11", iPad mini, Galaxy Tab S11 11", Galaxy Tab S11 Ultra / S12 Ultra (models with the same panel share one entry). Pages are the device's logical screen size in CSS px.
+
+### Changed
+- **`pageBreakBefore` defaults to `none`** (no page break before h1 headings); `h1` and `h1-h2` remain available.
+
+### Fixed
+- The progress notification stayed open until the completion warning or error message was dismissed.
+
 ## [0.8.0] - 2026-10-25
 
 ### Added

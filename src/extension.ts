@@ -115,7 +115,7 @@ export function defaultSettings(): Settings {
     headerAlign: 'right',
     footerAlign: 'right',
     headerFooterFontSize: 10,
-    pageBreakBefore: 'h1',
+    pageBreakBefore: 'none',
     breakBeforeTags: [],
     hideCodeCells: false,
     hideOutputs: false,
@@ -250,7 +250,25 @@ const COMMANDS: { id: string; withPassword: boolean; mark?: Mark }[] = [
   { id: 'ipynb-pdf-converter.convertToPdfJussamWithPassword', withPassword: true, mark: 'ju' },
 ];
 
-export function activate(context: vscode.ExtensionContext) {
+// API for other extensions (e.g. pdf2note): the same pipeline, returning the
+// PDF bytes instead of writing a file. Obtain it with
+// vscode.extensions.getExtension('leekh.ipynb-pdf-converter').exports.
+export interface ConvertRequest {
+  filePath: string;
+  // Settings to override on top of the user's configuration (e.g. headerText: '').
+  overrides?: Partial<Settings>;
+  password?: string;
+  mark?: Mark;
+  token?: vscode.CancellationToken;
+  onProgress?: (message: string, fraction: number) => void;
+}
+
+export interface ConverterApi {
+  readonly apiVersion: 1;
+  convertToPdfBytes(request: ConvertRequest): Promise<Uint8Array>;
+}
+
+export function activate(context: vscode.ExtensionContext): ConverterApi {
   outputChannel = vscode.window.createOutputChannel('Ipynb PDF Converter');
 
   for (const { id, withPassword, mark } of COMMANDS) {
@@ -271,6 +289,23 @@ export function activate(context: vscode.ExtensionContext) {
       })
     );
   }
+
+  return {
+    apiVersion: 1,
+    convertToPdfBytes: async (request) => {
+      const settings = {
+        ...readSettings(vscode.workspace.getConfiguration('ipynb-pdf-converter')),
+        ...(request.overrides ?? {}),
+      };
+      const baseName = path.basename(request.filePath).replace(/\.(ipynb|md)$/i, '');
+      const vars = { file: baseName, name: baseName, date: localDate() };
+      const token = request.token ?? new vscode.CancellationTokenSource().token;
+      const report = request.onProgress ?? (() => undefined);
+      outputChannel.appendLine(`📝 API request: ${path.basename(request.filePath)} → PDF bytes`);
+      const { buffer } = await producePdf(context, request.filePath, settings, vars, request.password, request.mark, token, report);
+      return buffer;
+    },
+  };
 }
 
 // The "with Password" command uses the configured default and prompts only when
@@ -332,73 +367,27 @@ async function runConversion(
       : sourceDir;
     const outputName = (expandPlaceholders(settings.outputFileName, vars) || baseName).replace(/\.pdf$/i, '');
 
-    progress.report({ message: 'Rendering document…', increment: 5 });
-    const raw = await fs.readFile(filePath, 'utf-8');
-    let warnings = 0;
-    const bodyHtml = await buildDocumentHtml(filePath, raw, settings, vars, (warning) => {
-      warnings++;
-      outputChannel.appendLine(`⚠️ ${warning}`);
+    // producePdf reports fractions 0..1; the notification wants increments summing to 100.
+    let reached = 0;
+    const { buffer, pages, warnings } = await producePdf(context, filePath, settings, vars, password, mark, token, (message, fraction) => {
+      const next = Math.round(fraction * 90);
+      progress.report({ message, increment: next - reached });
+      reached = next;
     });
-    // The mark is fetched on purpose, so allowRemoteImages does not apply.
-    let markImage: string | undefined;
-    if (mark) {
-      try {
-        markImage = await loadAsDataUrl(MARK_IMAGES[mark], sourceDir);
-        outputChannel.appendLine(`🖼️ Teacher mode: ${mark === 'ho' ? 'hossam' : 'jussam'} mark on every page`);
-      } catch (error) {
-        outputChannel.appendLine(
-          `⚠️ Instructor mark not available (${MARK_IMAGES[mark]}): ${error instanceof Error ? error.message : String(error)}`
-        );
-      }
-    }
-
-    const layout = resolveLayout(settings);
-    const theme = resolveTheme(settings.codeTheme);
-    const pageTheme = resolvePageTheme(settings.pdfTheme);
-    outputChannel.appendLine(
-      `Rendering in webview (page theme: ${pageTheme.info.label}, code theme: ${theme.info.label}, ` +
-        `paper: ${layout.key} ${settings.pdfPageOrientation} = ${layout.widthPx}×${layout.heightPx}px CSS, ` +
-        `margin: ${layout.margin}px, scale: ${settings.deviceScaleFactor}x, pages as ${settings.imageFormat.toUpperCase()})…`
-    );
-    progress.report({ message: 'Capturing pages…', increment: 5 });
-    // The webview reports each captured chunk; those steps share 70 points.
-    let captured = 0;
-    const pages = await captureInWebview(
-      context,
-      { bodyHtml, settings, vars, markImage },
-      token,
-      (done, total) => {
-        const reached = Math.round((done / total) * 70);
-        progress.report({ message: `Capturing pages… (${done}/${total})`, increment: reached - captured });
-        captured = reached;
-      }
-    );
-
-    progress.report({ message: 'Assembling PDF…', increment: 70 - captured + 10 });
-    outputChannel.appendLine(
-      `Assembling PDF (${pages.length} page${pages.length === 1 ? '' : 's'}${password ? ', password protected' : ''})…`
-    );
-    const buffer = await generatePdfFromPages(pages, layout.widthPx, layout.heightPx, {
-      password,
-      ownerPassword: settings.ownerPassword,
-      permissions: settings.pdfPermissions,
-    });
-    progress.report({ message: 'Saving…', increment: 10 });
+    progress.report({ message: 'Saving…', increment: 100 - reached });
     await fs.mkdir(outputDir, { recursive: true });
     // Never overwrite: an existing "name.pdf" yields "name (1).pdf", then "(2)"…
     const outputPath = await uniquePdfPath(outputDir, outputName);
     await fs.writeFile(outputPath, buffer);
-
-    outputChannel.appendLine(`✅ Saved: ${outputPath}`);
+    outputChannel.appendLine(`✅ Saved: ${outputPath} (${pages} page${pages === 1 ? '' : 's'})`);
     const summary = `✅ Converted to PDF${password ? ' (password protected)' : ''}: ${path.basename(outputPath)}`;
+    // Not awaited: the progress notification must close when this function returns.
     if (warnings > 0) {
-      const choice = await vscode.window.showWarningMessage(
-        `${summary} — ${warnings} image${warnings === 1 ? '' : 's'} could not be embedded`,
-        'Show Log'
-      );
-      if (choice === 'Show Log') {
-        outputChannel.show();
-      }
+      vscode.window
+        .showWarningMessage(`${summary} — ${warnings} image${warnings === 1 ? '' : 's'} could not be embedded`, 'Show Log')
+        .then((choice) => {
+          if (choice === 'Show Log') outputChannel.show();
+        });
     } else {
       vscode.window.showInformationMessage(summary);
     }
@@ -413,11 +402,71 @@ async function runConversion(
     }
     const message = error instanceof Error ? error.message : String(error);
     outputChannel.appendLine(`❌ Error: ${message}`);
-    const choice = await vscode.window.showErrorMessage(`Failed to convert notebook: ${message}`, 'Show Log');
-    if (choice === 'Show Log') {
-      outputChannel.show();
+    vscode.window.showErrorMessage(`Failed to convert notebook: ${message}`, 'Show Log').then((choice) => {
+      if (choice === 'Show Log') outputChannel.show();
+    });
+  }
+}
+
+// Renders the source to PDF bytes: document assembly, webview capture and
+// jsPDF assembly. Shared by the commands and the extension API.
+async function producePdf(
+  context: vscode.ExtensionContext,
+  filePath: string,
+  settings: Settings,
+  vars: Record<string, string>,
+  password: string | undefined,
+  mark: Mark | undefined,
+  token: vscode.CancellationToken,
+  report: (message: string, fraction: number) => void
+): Promise<{ buffer: Buffer; pages: number; warnings: number }> {
+  const sourceDir = path.dirname(filePath);
+  report('Rendering document…', 0.05);
+  const raw = await fs.readFile(filePath, 'utf-8');
+  let warnings = 0;
+  const bodyHtml = await buildDocumentHtml(filePath, raw, settings, vars, (warning) => {
+    warnings++;
+    outputChannel.appendLine(`⚠️ ${warning}`);
+  });
+
+  // The mark is fetched on purpose, so allowRemoteImages does not apply.
+  let markImage: string | undefined;
+  if (mark) {
+    try {
+      markImage = await loadAsDataUrl(MARK_IMAGES[mark], sourceDir);
+      outputChannel.appendLine(`🖼️ Teacher mode: ${mark === 'ho' ? 'hossam' : 'jussam'} mark on every page`);
+    } catch (error) {
+      outputChannel.appendLine(
+        `⚠️ Instructor mark not available (${MARK_IMAGES[mark]}): ${error instanceof Error ? error.message : String(error)}`
+      );
     }
   }
+
+  const layout = resolveLayout(settings);
+  const theme = resolveTheme(settings.codeTheme);
+  const pageTheme = resolvePageTheme(settings.pdfTheme);
+  outputChannel.appendLine(
+    `Rendering in webview (page theme: ${pageTheme.info.label}, code theme: ${theme.info.label}, ` +
+      `paper: ${layout.key} ${settings.pdfPageOrientation} = ${layout.widthPx}×${layout.heightPx}px CSS, ` +
+      `margin: ${layout.margin}px, scale: ${settings.deviceScaleFactor}x, pages as ${settings.imageFormat.toUpperCase()})…`
+  );
+  report('Capturing pages…', 0.1);
+  // The webview reports each captured chunk; capture spans 10%..85%.
+  const pages = await captureInWebview(context, { bodyHtml, settings, vars, markImage }, token, (done, total) =>
+    report(`Capturing pages… (${done}/${total})`, 0.1 + (done / total) * 0.75)
+  );
+
+  report('Assembling PDF…', 0.9);
+  outputChannel.appendLine(
+    `Assembling PDF (${pages.length} page${pages.length === 1 ? '' : 's'}${password ? ', password protected' : ''})…`
+  );
+  const buffer = await generatePdfFromPages(pages, layout.widthPx, layout.heightPx, {
+    password,
+    ownerPassword: settings.ownerPassword,
+    permissions: settings.pdfPermissions,
+  });
+  report('Assembled', 1);
+  return { buffer, pages: pages.length, warnings };
 }
 
 export async function uniquePdfPath(dir: string, name: string): Promise<string> {

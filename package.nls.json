@@ -23,7 +23,7 @@
   "config.codeTheme.enum.8": "Nord",
   "config.codeTheme.enum.9": "Visual Studio Dark",
   "config.codeTheme.enum.10": "Leekh (vertical/A4 print style: emoji headings, colored sections, accented outputs)",
-  "config.pdfPageSize.description": "Paper size of each PDF page. Content is laid out at 96 dpi (A4 portrait ≈ 794 × 1123 CSS px) and split across pages.",
+  "config.pdfPageSize.description": "Paper size of each PDF page. Content is laid out at 96 dpi (A4 portrait ≈ 794 × 1123 CSS px) and split across pages. Tablet entries are the device's logical screen size (CSS px), so a page fills the screen at 100%.",
   "config.pdfPageSize.enum.0": "A3 (297 × 420 mm)",
   "config.pdfPageSize.enum.1": "A4 (210 × 297 mm)",
   "config.pdfPageSize.enum.2": "A5 (148 × 210 mm)",
@@ -42,7 +42,7 @@
   "config.headerAlign.description": "Horizontal position of the header.",
   "config.footerAlign.description": "Horizontal position of the footer.",
   "config.headerFooterFontSize.description": "Header/footer font size in CSS px (10 px ≈ 7.5 pt). Skipped when the page margin is smaller than twice this size.",
-  "config.pageBreakBefore.description": "Headings that start a new page. A heading that already sits at the very top of the document never forces a blank page. Pages also never cut through a text line, table row or image.",
+  "config.pageBreakBefore.description": "Headings that start a new page (default none: no breaks before headings). A heading that already sits at the very top of the document never forces a blank page. Pages also never cut through a text line, table row or image.",
   "config.pageBreakBefore.enum.0": "Before every h1 heading (nb_convert.py's rule)",
   "config.pageBreakBefore.enum.1": "Before every h1 and h2 heading",
   "config.pageBreakBefore.enum.2": "Only before cells tagged in breakBeforeTags",
@@ -77,5 +77,12 @@
   "config.watermarkWidth.description": "Watermark width in CSS px.",
   "config.allowRemoteImages.description": "Fetch http(s) images referenced by the document (15 s timeout each). Off = they are left out and listed in the output channel.",
   "config.renderTimeoutSeconds.description": "How long the webview may take to render and capture the document before the conversion fails. Raise it for very long notebooks.",
-  "config.teacherMode.description": "Adds the hossam / jussam conversion commands (each with and without password) to the context menus and palette. Those modes draw the instructor mark (https://data.hossam.kr/itwill-ho.png or itwill-ju.png, 100 px wide) at the top right of every page in place of headerText, as nb_convert.py's --ssam did."
+  "config.teacherMode.description": "Adds the hossam / jussam conversion commands (each with and without password) to the context menus and palette. Those modes draw the instructor mark (https://data.hossam.kr/itwill-ho.png or itwill-ju.png, 100 px wide) at the top right of every page in place of headerText, as nb_convert.py's --ssam did.",
+  "config.pdfPageSize.enum.8": "iPad Pro 13\" (M4/M5, 2752 × 2064 px panel)",
+  "config.pdfPageSize.enum.9": "iPad Pro 11\" (M4/M5, 2420 × 1668 px panel)",
+  "config.pdfPageSize.enum.10": "iPad Air 13\" (M2/M3, 2732 × 2048 px panel)",
+  "config.pdfPageSize.enum.11": "iPad / iPad Air 11\" (2360 × 1640 px panel; same size)",
+  "config.pdfPageSize.enum.12": "iPad mini (A17 Pro, 2266 × 1488 px panel)",
+  "config.pdfPageSize.enum.13": "Galaxy Tab S11 11\" (2560 × 1600 px panel; S12 11\" expected to match)",
+  "config.pdfPageSize.enum.14": "Galaxy Tab S11 Ultra / S12 Ultra 14.6\" (2960 × 1848 px panel; same size)"
 }
