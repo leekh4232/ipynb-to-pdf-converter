@@ -51,7 +51,7 @@ ext install leekh.ipynb-pdf-converter
 ## 사용 방법
 
 1. `.ipynb` 또는 `.md` 파일을 **우클릭**합니다.
-2. 명령을 고릅니다.
+2. **PDF로 변환**(Convert to PDF) 메뉴에서 명령을 고릅니다.
 
    | 한국어 UI | English UI | 하는 일 |
    |:--|:--|:--|

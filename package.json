@@ -57,133 +57,39 @@
         "category": "Jupyter"
       }
     ],
+    "submenus": [
+      {
+        "id": "ipynb-pdf-converter.submenu",
+        "label": "%submenu.label%"
+      }
+    ],
     "menus": {
       "explorer/context": [
         {
-          "command": "ipynb-pdf-converter.convertToPdf",
+          "submenu": "ipynb-pdf-converter.submenu",
           "when": "resourceExtname == .ipynb || resourceExtname == .md",
           "group": "navigation@98"
-        },
-        {
-          "command": "ipynb-pdf-converter.convertToPdfWithPassword",
-          "when": "resourceExtname == .ipynb || resourceExtname == .md",
-          "group": "navigation@99"
-        },
-        {
-          "command": "ipynb-pdf-converter.convertToPdfHossam",
-          "when": "(resourceExtname == .ipynb || resourceExtname == .md) && config.ipynb-pdf-converter.teacherMode",
-          "group": "navigation@100"
-        },
-        {
-          "command": "ipynb-pdf-converter.convertToPdfHossamWithPassword",
-          "when": "(resourceExtname == .ipynb || resourceExtname == .md) && config.ipynb-pdf-converter.teacherMode",
-          "group": "navigation@101"
-        },
-        {
-          "command": "ipynb-pdf-converter.convertToPdfJussam",
-          "when": "(resourceExtname == .ipynb || resourceExtname == .md) && config.ipynb-pdf-converter.teacherMode",
-          "group": "navigation@102"
-        },
-        {
-          "command": "ipynb-pdf-converter.convertToPdfJussamWithPassword",
-          "when": "(resourceExtname == .ipynb || resourceExtname == .md) && config.ipynb-pdf-converter.teacherMode",
-          "group": "navigation@103"
         }
       ],
       "editor/title/context": [
         {
-          "command": "ipynb-pdf-converter.convertToPdf",
+          "submenu": "ipynb-pdf-converter.submenu",
           "when": "resourceExtname == .ipynb || resourceExtname == .md",
           "group": "navigation@98"
-        },
-        {
-          "command": "ipynb-pdf-converter.convertToPdfWithPassword",
-          "when": "resourceExtname == .ipynb || resourceExtname == .md",
-          "group": "navigation@99"
-        },
-        {
-          "command": "ipynb-pdf-converter.convertToPdfHossam",
-          "when": "(resourceExtname == .ipynb || resourceExtname == .md) && config.ipynb-pdf-converter.teacherMode",
-          "group": "navigation@100"
-        },
-        {
-          "command": "ipynb-pdf-converter.convertToPdfHossamWithPassword",
-          "when": "(resourceExtname == .ipynb || resourceExtname == .md) && config.ipynb-pdf-converter.teacherMode",
-          "group": "navigation@101"
-        },
-        {
-          "command": "ipynb-pdf-converter.convertToPdfJussam",
-          "when": "(resourceExtname == .ipynb || resourceExtname == .md) && config.ipynb-pdf-converter.teacherMode",
-          "group": "navigation@102"
-        },
-        {
-          "command": "ipynb-pdf-converter.convertToPdfJussamWithPassword",
-          "when": "(resourceExtname == .ipynb || resourceExtname == .md) && config.ipynb-pdf-converter.teacherMode",
-          "group": "navigation@103"
         }
       ],
       "editor/context": [
         {
-          "command": "ipynb-pdf-converter.convertToPdf",
+          "submenu": "ipynb-pdf-converter.submenu",
           "when": "resourceExtname == .ipynb || resourceExtname == .md",
           "group": "navigation@98"
-        },
-        {
-          "command": "ipynb-pdf-converter.convertToPdfWithPassword",
-          "when": "resourceExtname == .ipynb || resourceExtname == .md",
-          "group": "navigation@99"
-        },
-        {
-          "command": "ipynb-pdf-converter.convertToPdfHossam",
-          "when": "(resourceExtname == .ipynb || resourceExtname == .md) && config.ipynb-pdf-converter.teacherMode",
-          "group": "navigation@100"
-        },
-        {
-          "command": "ipynb-pdf-converter.convertToPdfHossamWithPassword",
-          "when": "(resourceExtname == .ipynb || resourceExtname == .md) && config.ipynb-pdf-converter.teacherMode",
-          "group": "navigation@101"
-        },
-        {
-          "command": "ipynb-pdf-converter.convertToPdfJussam",
-          "when": "(resourceExtname == .ipynb || resourceExtname == .md) && config.ipynb-pdf-converter.teacherMode",
-          "group": "navigation@102"
-        },
-        {
-          "command": "ipynb-pdf-converter.convertToPdfJussamWithPassword",
-          "when": "(resourceExtname == .ipynb || resourceExtname == .md) && config.ipynb-pdf-converter.teacherMode",
-          "group": "navigation@103"
         }
       ],
       "notebook/cell/title": [
         {
-          "command": "ipynb-pdf-converter.convertToPdf",
+          "submenu": "ipynb-pdf-converter.submenu",
           "when": "notebookType == jupyter-notebook",
           "group": "z_convert@98"
-        },
-        {
-          "command": "ipynb-pdf-converter.convertToPdfWithPassword",
-          "when": "notebookType == jupyter-notebook",
-          "group": "z_convert@99"
-        },
-        {
-          "command": "ipynb-pdf-converter.convertToPdfHossam",
-          "when": "notebookType == jupyter-notebook && config.ipynb-pdf-converter.teacherMode",
-          "group": "z_convert@100"
-        },
-        {
-          "command": "ipynb-pdf-converter.convertToPdfHossamWithPassword",
-          "when": "notebookType == jupyter-notebook && config.ipynb-pdf-converter.teacherMode",
-          "group": "z_convert@101"
-        },
-        {
-          "command": "ipynb-pdf-converter.convertToPdfJussam",
-          "when": "notebookType == jupyter-notebook && config.ipynb-pdf-converter.teacherMode",
-          "group": "z_convert@102"
-        },
-        {
-          "command": "ipynb-pdf-converter.convertToPdfJussamWithPassword",
-          "when": "notebookType == jupyter-notebook && config.ipynb-pdf-converter.teacherMode",
-          "group": "z_convert@103"
         }
       ],
       "commandPalette": [
@@ -210,6 +116,38 @@
         {
           "command": "ipynb-pdf-converter.convertToPdfJussamWithPassword",
           "when": "(resourceExtname == .ipynb || resourceExtname == .md || activeEditor == 'workbench.editor.notebook') && config.ipynb-pdf-converter.teacherMode"
+        }
+      ],
+      "ipynb-pdf-converter.submenu": [
+        {
+          "command": "ipynb-pdf-converter.convertToPdf",
+          "when": "resourceExtname == .ipynb || resourceExtname == .md",
+          "group": "1_default@0"
+        },
+        {
+          "command": "ipynb-pdf-converter.convertToPdfWithPassword",
+          "when": "resourceExtname == .ipynb || resourceExtname == .md",
+          "group": "1_default@1"
+        },
+        {
+          "command": "ipynb-pdf-converter.convertToPdfHossam",
+          "when": "(resourceExtname == .ipynb || resourceExtname == .md) && config.ipynb-pdf-converter.teacherMode",
+          "group": "2_teacher@2"
+        },
+        {
+          "command": "ipynb-pdf-converter.convertToPdfHossamWithPassword",
+          "when": "(resourceExtname == .ipynb || resourceExtname == .md) && config.ipynb-pdf-converter.teacherMode",
+          "group": "2_teacher@3"
+        },
+        {
+          "command": "ipynb-pdf-converter.convertToPdfJussam",
+          "when": "(resourceExtname == .ipynb || resourceExtname == .md) && config.ipynb-pdf-converter.teacherMode",
+          "group": "2_teacher@4"
+        },
+        {
+          "command": "ipynb-pdf-converter.convertToPdfJussamWithPassword",
+          "when": "(resourceExtname == .ipynb || resourceExtname == .md) && config.ipynb-pdf-converter.teacherMode",
+          "group": "2_teacher@5"
         }
       ]
     },

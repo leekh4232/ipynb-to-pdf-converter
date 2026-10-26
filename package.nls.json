@@ -1,4 +1,5 @@
 {
+  "submenu.label": "Convert to PDF",
   "description": "Convert Jupyter Notebook (.ipynb) and Markdown (.md) files to paginated PDF documents on standard paper sizes (A4, A3, B5, …) with light/dark page themes and optional password protection.",
   "cmd.convertToPdf.title": "Convert Notebook/Markdown to PDF",
   "cmd.convertToPdfWithPassword.title": "Convert Notebook/Markdown to PDF (with Password)",
