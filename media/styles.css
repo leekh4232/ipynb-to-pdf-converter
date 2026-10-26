@@ -171,7 +171,13 @@ html, body {
   color: #1f2328;
 }
 
-.jp-OutputImage {
+/* Images and inline SVGs (matplotlib's svg backend, graphviz, raw <svg> in
+   markdown) carry their own size; wider ones shrink to the content width. */
+.jp-OutputImage,
+.jp-OutputImage svg,
+.jp-RenderedHTML img,
+.jp-RenderedHTML svg,
+.markdown-body svg {
   max-width: 100%;
   height: auto;
 }

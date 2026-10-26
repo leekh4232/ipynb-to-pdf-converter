@@ -1140,6 +1140,18 @@ function buildWebviewHtml(params: {
         vscode.postMessage({ type: 'error', message: String(err && err.message || err) });
       });
   }
+  // CSS shrinks an oversized inline <svg> to the content width, but its
+  // drawing only scales along through a viewBox; derive one from the
+  // width/height attributes when the SVG has none (html2canvas re-serialises
+  // the element at its rendered size and would otherwise crop it).
+  document.querySelectorAll('#capture-root svg').forEach((svg) => {
+    if (svg.ownerSVGElement || svg.hasAttribute('viewBox')) return;
+    const w = svg.width.baseVal;
+    const h = svg.height.baseVal;
+    const PERCENT = 2; // SVGLength.SVG_LENGTHTYPE_PERCENTAGE
+    if (w.unitType === PERCENT || h.unitType === PERCENT || !(w.value > 0) || !(h.value > 0)) return;
+    svg.setAttribute('viewBox', '0 0 ' + w.value + ' ' + h.value);
+  });
   // Wait for fonts and images before capturing
   const imgPromises = Array.from(document.images).map((img) =>
     img.complete ? Promise.resolve() : new Promise((r) => {
