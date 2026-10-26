@@ -4,6 +4,11 @@
 
 형식은 [Keep a Changelog](https://keepachangelog.com/ko/1.1.0/)를, 버전은 [유의적 버전](https://semver.org/lang/ko/)을 따릅니다.
 
+## [0.10.3] - 2026-10-26
+
+### 추가
+- **자동 업데이트 안내**: VS Code의 확장 자동 업데이트가 꺼져 있으면(`extensions.autoUpdate`가 `off`/`false` 또는 `onlySelectedExtensions`), 설치 뒤 처음 한 번 켤지 묻고 **Turn on auto-update**를 누르면 사용자 설정을 켭니다. 이미 켜져 있으면 아무것도 묻지 않습니다. 자동 업데이트 여부는 VS Code 사용자 설정이라 확장이 직접 켤 수는 없습니다.
+
 ## [0.10.2] - 2026-10-26
 
 ### 수정

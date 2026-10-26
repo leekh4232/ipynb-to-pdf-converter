@@ -290,6 +290,8 @@ export function activate(context: vscode.ExtensionContext): ConverterApi {
     );
   }
 
+  void offerAutoUpdate(context);
+
   return {
     apiVersion: 1,
     convertToPdfBytes: async (request) => {
@@ -306,6 +308,34 @@ export function activate(context: vscode.ExtensionContext): ConverterApi {
       return buffer;
     },
   };
+}
+
+// Whether an extension auto-updates is the user's VS Code setting
+// (extensions.autoUpdate); a manifest cannot opt in. So, once, when updates are
+// off, offer to turn them on so fixes reach the user.
+const AUTO_UPDATE_OFFERED = 'autoUpdateOffered';
+async function offerAutoUpdate(context: vscode.ExtensionContext): Promise<void> {
+  if (context.globalState.get<boolean>(AUTO_UPDATE_OFFERED)) {
+    return;
+  }
+  const config = vscode.workspace.getConfiguration('extensions');
+  // Older VS Code uses true/false, newer 'on'/'off'; 'onlySelectedExtensions'
+  // leaves a fresh install unselected. Anything unrecognised is left alone.
+  const mode = config.get<boolean | string>('autoUpdate');
+  if (mode !== false && mode !== 'off' && mode !== 'onlySelectedExtensions') {
+    return;
+  }
+  await context.globalState.update(AUTO_UPDATE_OFFERED, true);
+  const turnOn = 'Turn on auto-update';
+  const choice = await vscode.window.showInformationMessage(
+    'Ipynb PDF Converter: extension auto-update is off, so fixes and new features will not arrive on their own. Turn it on for all extensions?',
+    turnOn,
+    'Not now'
+  );
+  if (choice === turnOn) {
+    const on = config.inspect('autoUpdate')?.defaultValue === true ? true : 'on';
+    await config.update('autoUpdate', on, vscode.ConfigurationTarget.Global);
+  }
 }
 
 // The "with Password" command uses the configured default and prompts only when

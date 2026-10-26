@@ -63,6 +63,8 @@ ext install leekh.ipynb-pdf-converter
 
 `.md`의 `---`로 감싼 머리글(YAML front matter)은 PDF에 넣지 않습니다. 맨 위 머리글(예: `theme` · `title` · `layout`)과 Slidev 슬라이드마다 붙는 `layout: two-cols` 같은 블록이 모두 빠지고, 코드 블록 안의 예시는 그대로 남습니다.
 
+설치 뒤 VS Code의 확장 자동 업데이트(`extensions.autoUpdate`)가 꺼져 있으면 처음 한 번 켤지 묻습니다. **Turn on auto-update**를 누르면 사용자 설정이 켜지고, **Not now**를 누르면 다시 묻지 않습니다.
+
 변환 중에는 알림 영역에 진행률(렌더링 → 페이지 캡처 → PDF 조립 → 저장)이 보이고 취소할 수 있습니다. 출력 창은 자동으로 열리지 않으며, 오류나 이미지 누락 알림의 **Show Log** 버튼으로 엽니다.
 
 ## 설정
