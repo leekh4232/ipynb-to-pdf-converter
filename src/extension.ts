@@ -1170,18 +1170,108 @@ function buildWebviewHtml(params: {
         vscode.postMessage({ type: 'error', message: String(err && err.message || err) });
       });
   }
-  // CSS shrinks an oversized inline <svg> to the content width, but its
-  // drawing only scales along through a viewBox; derive one from the
-  // width/height attributes when the SVG has none (html2canvas re-serialises
-  // the element at its rendered size and would otherwise crop it).
-  document.querySelectorAll('#capture-root svg').forEach((svg) => {
-    if (svg.ownerSVGElement || svg.hasAttribute('viewBox')) return;
-    const w = svg.width.baseVal;
-    const h = svg.height.baseVal;
-    const PERCENT = 2; // SVGLength.SVG_LENGTHTYPE_PERCENTAGE
-    if (w.unitType === PERCENT || h.unitType === PERCENT || !(w.value > 0) || !(h.value > 0)) return;
-    svg.setAttribute('viewBox', '0 0 ' + w.value + ' ' + h.value);
-  });
+  // SVGs are rasterised to PNG at the capture scale before html2canvas runs.
+  // html2canvas draws an <img> whose SVG has only a viewBox (no width/height)
+  // at a wrong intrinsic size — the drawing comes out enlarged and cropped —
+  // and re-serialises inline <svg> without a viewBox, which crops it too.
+  // Drawing each SVG onto a canvas at its laid-out size sidesteps both; the
+  // layout does not change, so the page cuts are unaffected.
+  function svgTextFromDataUrl(src) {
+    const comma = src.indexOf(',');
+    if (comma < 0) return null;
+    const meta = src.slice(0, comma);
+    const body = src.slice(comma + 1);
+    try {
+      if (/;base64/i.test(meta)) {
+        const bin = atob(body);
+        const bytes = new Uint8Array(bin.length);
+        for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+        return new TextDecoder().decode(bytes);
+      }
+      return decodeURIComponent(body);
+    } catch {
+      return null;
+    }
+  }
+  // Parsed <svg> root with explicit pixel width/height (and a viewBox so the
+  // drawing scales to them), serialised back to a data: URL.
+  function sizedSvgUrl(root, w, h) {
+    if (!root.hasAttribute('viewBox')) {
+      const vw = root.width.baseVal;
+      const vh = root.height.baseVal;
+      const PERCENT = 2; // SVGLength.SVG_LENGTHTYPE_PERCENTAGE
+      if (vw.unitType !== PERCENT && vh.unitType !== PERCENT && vw.value > 0 && vh.value > 0) {
+        root.setAttribute('viewBox', '0 0 ' + vw.value + ' ' + vh.value);
+      }
+    }
+    root.setAttribute('width', w + 'px');
+    root.setAttribute('height', h + 'px');
+    if (!root.getAttribute('xmlns')) root.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
+    return 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(new XMLSerializer().serializeToString(root));
+  }
+  function rasterize(url, w, h) {
+    return new Promise((resolve) => {
+      const img = new Image();
+      img.onload = () => {
+        try {
+          const canvas = document.createElement('canvas');
+          canvas.width = Math.max(1, Math.round(w * scale));
+          canvas.height = Math.max(1, Math.round(h * scale));
+          canvas.getContext('2d').drawImage(img, 0, 0, canvas.width, canvas.height);
+          resolve(canvas.toDataURL('image/png'));
+        } catch {
+          resolve(null);
+        }
+      };
+      img.onerror = () => resolve(null);
+      img.src = url;
+    });
+  }
+  async function rasterizeSvgs(root) {
+    const jobs = [];
+    root.querySelectorAll('img').forEach((img) => {
+      if (!/^data:image\\/svg\\+xml/i.test(img.getAttribute('src') || '')) return;
+      const r = img.getBoundingClientRect();
+      if (!(r.width > 0 && r.height > 0)) return;
+      const text = svgTextFromDataUrl(img.getAttribute('src'));
+      const doc = text && new DOMParser().parseFromString(text, 'image/svg+xml');
+      const svg = doc && doc.documentElement;
+      if (!svg || svg.nodeName.toLowerCase() !== 'svg') return;
+      jobs.push(
+        rasterize(sizedSvgUrl(svg, r.width, r.height), r.width, r.height).then((png) => {
+          if (!png) return;
+          img.style.width = r.width + 'px';
+          img.style.height = r.height + 'px';
+          img.src = png;
+        })
+      );
+    });
+    root.querySelectorAll('svg').forEach((svg) => {
+      if (svg.ownerSVGElement) return; // nested
+      const r = svg.getBoundingClientRect();
+      if (!(r.width > 0 && r.height > 0)) return;
+      const style = getComputedStyle(svg);
+      jobs.push(
+        rasterize(sizedSvgUrl(svg.cloneNode(true), r.width, r.height), r.width, r.height).then((png) => {
+          if (!png) return;
+          const img = document.createElement('img');
+          img.src = png;
+          img.alt = '';
+          img.style.display = style.display === 'inline' ? 'inline-block' : style.display;
+          img.style.verticalAlign = style.verticalAlign;
+          img.style.margin = style.margin;
+          img.style.width = r.width + 'px';
+          img.style.height = r.height + 'px';
+          svg.replaceWith(img);
+        })
+      );
+    });
+    await Promise.all(jobs);
+    // Let the new PNGs decode before measuring and capturing.
+    await Promise.all(
+      Array.from(root.querySelectorAll('img')).map((img) => (img.decode ? img.decode().catch(() => undefined) : undefined))
+    );
+  }
   // Wait for fonts and images before capturing
   const imgPromises = Array.from(document.images).map((img) =>
     img.complete ? Promise.resolve() : new Promise((r) => {
@@ -1190,8 +1280,9 @@ function buildWebviewHtml(params: {
     })
   );
   Promise.all([document.fonts ? document.fonts.ready : Promise.resolve(), loadMark(), ...imgPromises])
-    .then(() => requestAnimationFrame(() => requestAnimationFrame(capture)))
-    .catch(() => capture());
+    .then(() => rasterizeSvgs(document.getElementById('capture-root')))
+    .catch(() => undefined)
+    .then(() => requestAnimationFrame(() => requestAnimationFrame(capture)));
 })();
 </script>
 </body>
