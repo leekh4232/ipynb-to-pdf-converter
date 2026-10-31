@@ -273,19 +273,25 @@ export function activate(context: vscode.ExtensionContext): ConverterApi {
 
   for (const { id, withPassword, mark } of COMMANDS) {
     context.subscriptions.push(
-      vscode.commands.registerCommand(id, async (arg?: unknown) => {
-        // Explorer/editor menus pass the file Uri; notebook cell menus pass a
-        // cell context instead, so fall back to the active editor's file.
-        const target = arg instanceof vscode.Uri ? arg : resolveActiveSourceUri();
-        if (!target || !isSupported(target.fsPath)) {
+      vscode.commands.registerCommand(id, async (arg?: unknown, selected?: unknown) => {
+        // The explorer passes the clicked Uri plus every selected Uri; other
+        // menus pass one Uri, and notebook cell menus a cell context, so fall
+        // back to the active editor's file.
+        const targets =
+          Array.isArray(selected) && selected.length > 0 && selected.every((u) => u instanceof vscode.Uri)
+            ? (selected as vscode.Uri[])
+            : [arg instanceof vscode.Uri ? arg : resolveActiveSourceUri()];
+        const filePaths = targets.flatMap((u) => (u && isSupported(u.fsPath) ? [u.fsPath] : []));
+        if (filePaths.length === 0) {
           vscode.window.showErrorMessage('Please select a .ipynb or .md file');
           return;
         }
+        // One password for the whole selection.
         const password = withPassword ? await resolvePassword() : undefined;
         if (withPassword && password === undefined) {
           return; // prompt dismissed
         }
-        await convertToPdf(context, target.fsPath, password, mark);
+        await convertFilesToPdf(context, filePaths, password, mark);
       })
     );
   }
@@ -356,26 +362,60 @@ async function resolvePassword(): Promise<string | undefined> {
   });
 }
 
-async function convertToPdf(
+// Converts the files one after another. A single file reports its own result;
+// a selection gets one summary at the end, and cancelling stops the rest.
+async function convertFilesToPdf(
   context: vscode.ExtensionContext,
-  filePath: string,
+  filePaths: string[],
   password?: string,
   mark?: Mark
 ): Promise<void> {
-  const fileName = path.basename(filePath);
-  const baseName = fileName.replace(/\.(ipynb|md)$/i, '');
   const settings = readSettings(vscode.workspace.getConfiguration('ipynb-pdf-converter'));
-  const vars = { file: baseName, name: baseName, date: localDate() };
+  const batch = filePaths.length > 1;
+  const results: ConversionResult[] = [];
 
   // The log stays in the background; the progress notification is the UI.
   outputChannel.clear();
-  outputChannel.appendLine(`📝 Converting: ${fileName} → PDF`);
+  for (const [i, filePath] of filePaths.entries()) {
+    const fileName = path.basename(filePath);
+    const baseName = fileName.replace(/\.(ipynb|md)$/i, '');
+    const vars = { file: baseName, name: baseName, date: localDate() };
+    const counter = batch ? ` (${i + 1}/${filePaths.length})` : '';
+    outputChannel.appendLine(`📝 Converting${counter}: ${fileName} → PDF`);
 
-  // The notification carries a progress bar and a cancel button; stages add up to 100.
-  await vscode.window.withProgress(
-    { location: vscode.ProgressLocation.Notification, title: `Converting ${fileName} to PDF`, cancellable: true },
-    (progress, token) => runConversion(context, filePath, password, mark, settings, vars, progress, token)
-  );
+    // The notification carries a progress bar and a cancel button; stages add up to 100.
+    const result = await vscode.window.withProgress(
+      { location: vscode.ProgressLocation.Notification, title: `Converting ${fileName} to PDF${counter}`, cancellable: true },
+      (progress, token) => runConversion(context, filePath, password, mark, settings, vars, progress, token, !batch)
+    );
+    results.push(result);
+    if (result === 'cancelled') {
+      break;
+    }
+  }
+  if (batch) {
+    reportBatch(results, filePaths.length, password !== undefined);
+  }
+}
+
+type ConversionResult = 'ok' | 'warned' | 'failed' | 'cancelled';
+
+function reportBatch(results: ConversionResult[], total: number, encrypted: boolean): void {
+  const converted = results.filter((r) => r === 'ok' || r === 'warned').length;
+  const failed = results.filter((r) => r === 'failed').length;
+  const warned = results.filter((r) => r === 'warned').length;
+  const skipped = total - results.length;
+  let summary = `Converted ${converted} of ${total} files to PDF${encrypted ? ' (password protected)' : ''}`;
+  if (failed > 0) summary += `, ${failed} failed`;
+  if (skipped > 0) summary += `, ${skipped} skipped after cancel`;
+  if (warned > 0) summary += `, ${warned} with images that could not be embedded`;
+  if (failed > 0 || warned > 0) {
+    vscode.window.showWarningMessage(`⚠️ ${summary}`, 'Show Log').then((choice) => {
+      if (choice === 'Show Log') outputChannel.show();
+    });
+  } else {
+    vscode.window.showInformationMessage(`✅ ${summary}`);
+  }
 }
 
 async function runConversion(
@@ -386,8 +426,9 @@ async function runConversion(
   settings: Settings,
   vars: Record<string, string>,
   progress: vscode.Progress<{ message?: string; increment?: number }>,
-  token: vscode.CancellationToken
-): Promise<void> {
+  token: vscode.CancellationToken,
+  notify: boolean
+): Promise<ConversionResult> {
   const fileName = path.basename(filePath);
   const baseName = vars.name;
   try {
@@ -411,6 +452,15 @@ async function runConversion(
     await fs.writeFile(outputPath, buffer);
     outputChannel.appendLine(`✅ Saved: ${outputPath} (${pages} page${pages === 1 ? '' : 's'})`);
     const summary = `✅ Converted to PDF${password ? ' (password protected)' : ''}: ${path.basename(outputPath)}`;
+    if (settings.openAfterConvert) {
+      await vscode.env.openExternal(vscode.Uri.file(outputPath));
+    }
+    if (warnings > 0) {
+      outputChannel.appendLine(`⚠️ ${warnings} image${warnings === 1 ? '' : 's'} could not be embedded`);
+    }
+    if (!notify) {
+      return warnings > 0 ? 'warned' : 'ok';
+    }
     // Not awaited: the progress notification must close when this function returns.
     if (warnings > 0) {
       vscode.window
@@ -421,20 +471,21 @@ async function runConversion(
     } else {
       vscode.window.showInformationMessage(summary);
     }
-    if (settings.openAfterConvert) {
-      await vscode.env.openExternal(vscode.Uri.file(outputPath));
-    }
+    return warnings > 0 ? 'warned' : 'ok';
   } catch (error) {
     if (token.isCancellationRequested) {
       outputChannel.appendLine('⏹ Cancelled');
       vscode.window.showInformationMessage(`Conversion of ${fileName} cancelled`);
-      return;
+      return 'cancelled';
     }
     const message = error instanceof Error ? error.message : String(error);
     outputChannel.appendLine(`❌ Error: ${message}`);
-    vscode.window.showErrorMessage(`Failed to convert notebook: ${message}`, 'Show Log').then((choice) => {
-      if (choice === 'Show Log') outputChannel.show();
-    });
+    if (notify) {
+      vscode.window.showErrorMessage(`Failed to convert notebook: ${message}`, 'Show Log').then((choice) => {
+        if (choice === 'Show Log') outputChannel.show();
+      });
+    }
+    return 'failed';
   }
 }
 
